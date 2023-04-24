@@ -63,7 +63,7 @@ class ChatServiceTest {
         chatService = ChatService(
             restTemplate,
             chatCompletionRequestFactory,
-            "YOUR_API_KEY",
+            "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"
         )
     }
 

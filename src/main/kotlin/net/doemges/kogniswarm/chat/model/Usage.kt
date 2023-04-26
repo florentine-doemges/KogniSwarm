@@ -1,5 +1,7 @@
 package net.doemges.kogniswarm.chat.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 /**
  * Usage represents the token usage information for the request.
  *
@@ -8,7 +10,7 @@ package net.doemges.kogniswarm.chat.model
  * @property total_tokens The total number of tokens used (prompt_tokens + completion_tokens).
  */
 data class Usage(
-    val prompt_tokens: Int,
-    val completion_tokens: Int,
-    val total_tokens: Int
+    @JsonProperty("prompt_tokens") val promptTokens: Int,
+    @JsonProperty("completion_tokens") val completionTokens: Int,
+    @JsonProperty("total_tokens") val totalTokens: Int
 )

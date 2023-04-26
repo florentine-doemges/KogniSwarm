@@ -47,10 +47,17 @@ class ChatService @Autowired constructor(
             requestWrapper,
             ChatCompletionResponse::class.java
         )
+
         if (!responseEntity.statusCode.is2xxSuccessful) {
             throw IOException("Unexpected response: $responseEntity")
         }
+
+        if (responseEntity.body == null) {
+            throw IOException("The response body is null: $responseEntity")
+        }
+
         return responseEntity.body!!
     }
+
 
 }

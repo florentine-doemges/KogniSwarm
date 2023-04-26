@@ -1,5 +1,8 @@
 package net.doemges.kogniswarm.chat.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+
 /**
  * Choice represents a single generated choice for the input message.
  *
@@ -8,8 +11,7 @@ package net.doemges.kogniswarm.chat.model
  * @property index The index of the choice in the list of choices.
  */
 data class Choice(
-    val message: ChoiceMessage,
-    val finish_reason: String,
-    val index: Int
-) {
-}
+    @JsonProperty("message") val message: ChatMessage,
+    @JsonProperty("finish_reason") val finishReason: String,
+    @JsonProperty("index") val index: Int
+)

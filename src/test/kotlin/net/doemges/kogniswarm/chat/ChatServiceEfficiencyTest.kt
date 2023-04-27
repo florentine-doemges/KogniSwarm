@@ -5,7 +5,6 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isLessThanOrEqualTo
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import org.jbehave.core.annotations.Given
-import org.jbehave.core.annotations.Then
 import org.jbehave.core.annotations.When
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

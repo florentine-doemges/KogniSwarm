@@ -11,7 +11,6 @@ import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -22,8 +21,7 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
 @SpringBootTest
-@ActiveProfiles("test")
-class GPT4CodeGeneratorTest {
+class CodeGeneratorTest {
 
     private val input: ChatMessageBundle =
         ChatMessageBundle.fromInput(
@@ -50,7 +48,7 @@ class GPT4CodeGeneratorTest {
         val compilationConfiguration = ScriptCompilationConfiguration {
             jvm {
                 dependenciesFromClassContext(
-                    GPT4CodeGeneratorTest::class,
+                    CodeGeneratorTest::class,
                     wholeClasspath = true
                 )
             }

@@ -25,12 +25,7 @@ import org.springframework.web.client.RestTemplate
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest
-@ActiveProfiles("test")
-@TestPropertySource(locations = ["classpath:application-test.properties"])
 class GenerateSimpleTextTest {
-
-    @Autowired
-    private lateinit var restTemplate: RestTemplate
 
     @Autowired
     private lateinit var chatService: ChatService

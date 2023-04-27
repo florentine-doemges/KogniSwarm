@@ -41,5 +41,3 @@ KogniSwarm is a cutting-edge open-source application that leverages the power of
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Server-blue)](https://discord.gg/e3c5r9ZVn7)
 
-
-frwefer

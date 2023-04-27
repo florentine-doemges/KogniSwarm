@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate
 @Service
 class SummaryService(private val chatService: ChatService, restTemplate: RestTemplate) {
 
-    private val defaultMode = SummaryMode.EXTRACTIVE
+    private val defaultMode = SummaryMode.WEIGHTED
 
     private val tokenizer = Tokenizer("gpt-3.5-turbo", restTemplate)
 
@@ -45,7 +45,7 @@ class SummaryService(private val chatService: ChatService, restTemplate: RestTem
                     | Combine related information, prioritize crucial details, and revise for accuracy and clarity. 
                     | If input tokens are less than $maxChunkSize, return the original text. 
                     | Otherwise, provide a summary with a focus on important details, 
-                    | ensuring the response has exactly $maxChunkSize tokens. 
+                    | ensuring the r    esponse has exactly $maxChunkSize tokens. 
                     | Preserve code at full length."""".trimMargin()
                     )
                 )
@@ -94,7 +94,12 @@ enum class SummaryMode(private val prompt: String) {
                 "formatted as \"YYYY-MM-DDTHH:mm:ss.SSSSSS\". "
     ),
     STRUCTURED("Provide a structured summary of this text"),
-    BRAIN("Generate a summary of this text like the brain would");
+    BRAIN("Generate a summary of this text like the brain would"),
+    WEIGHTED(
+        "Please provide a weighted summarization of the following text. " +
+                "Identify and emphasize the main points or factors based on their prominence and relevance in the text. " +
+                "Text"
+    );
 
     override fun toString(): String = prompt
 }

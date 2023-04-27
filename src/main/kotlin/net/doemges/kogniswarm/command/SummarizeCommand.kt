@@ -11,5 +11,5 @@ import java.io.File
 class SummarizeCommand(private val summaryService: SummaryService) {
     @ShellMethod("Summarize a text file")
     fun summarize(@ShellOption(value = ["-f"]) file: String): String =
-        summaryService.summarizeText(File(file).readText(), 2048, SummaryMode.BULLETED)
+        summaryService.summarizeText(File(file).readText(), 2048, SummaryMode.WEIGHTED)
 }

@@ -27,7 +27,7 @@ class SummaryServiceTest {
 
         val testText = "This is a test text for summary. The main goal is to ensure the functionality of the summarizer."
         val maxChunkSize = 2048
-        val summaryMode = SummaryMode.EXTRACTIVE
+        val summaryMode = SummaryMode.WEIGHTED
 
         val summary = summaryService.summarizeText(testText, maxChunkSize, summaryMode)
 

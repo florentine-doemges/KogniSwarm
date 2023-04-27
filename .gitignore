@@ -64,3 +64,4 @@ hs_err_pid*
 replay_pid*
 >>>>>>> origin/main
 /src/test/resources/application-test.properties
+/src/main/resources/url-content-cache.json

@@ -1,5 +1,7 @@
 package net.doemges.kogniswarm.http
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.annotation.PostConstruct
@@ -7,8 +9,10 @@ import jakarta.annotation.PreDestroy
 import org.springframework.stereotype.Component
 import java.io.File
 
-data class CacheEntry(val timestamp: Long, val content: String)
-
+data class CacheEntry @JsonCreator constructor(
+    @JsonProperty("timestamp") val timestamp: Long,
+    @JsonProperty("content") val content: String
+)
 @Component
 class UrlContentCache(
     private val objectMapper: ObjectMapper

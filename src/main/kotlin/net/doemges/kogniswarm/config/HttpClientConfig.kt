@@ -101,7 +101,8 @@ class HttpClientConfig {
             logger.warn(
                 "{}\n{}\n----------------\n{}\n----------------\n",
                 response.statusCode,
-                response.headers,""
+                response.headers,
+                ""
 //                response.bodyAsString()
             )
             return response

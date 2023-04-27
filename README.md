@@ -36,3 +36,7 @@ KogniSwarm is a cutting-edge open-source application that leverages the power of
 - 🌐 P2P Networking for decentralized resource and processing power sharing
 - 🎣 Extension hooks and plugin system for seamless integration and customization
 - 🔌 Wide variety of plugins for extensibility
+
+### Community
+
+[![Discord](https://img.shields.io/badge/Discord-Join%20Server-blue)](https://discord.gg/jjBzvf4U)

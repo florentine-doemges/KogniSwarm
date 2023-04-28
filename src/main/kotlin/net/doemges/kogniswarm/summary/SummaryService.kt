@@ -14,13 +14,14 @@ class SummaryService(private val chatService: ChatService, restTemplate: RestTem
 
     fun summarizeText(
         text: String,
-        maxChunkSize: Int = 2048,
+        maxChunkSize: Int = 4096,
         summaryMode: SummaryMode = defaultMode
     ): String =
         text.takeIf { it.isNotEmpty() }
                 ?.let {
                     val tokenized = tokenizer.tokenize(it)
-                    tokenized.chunked(maxChunkSize)
+                    val chunked = tokenized.chunked(maxChunkSize)
+                    chunked
                             .also {
                                 println("TextSummarizer: ${it.size} chunks")
                             }

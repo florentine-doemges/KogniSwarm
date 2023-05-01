@@ -1,37 +1,32 @@
 package net.doemges.kogniswarm.agent
 
+import dev.kord.core.Kord
+import dev.kord.core.entity.Message
+import dev.kord.core.event.message.MessageCreateEvent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.springframework.shell.ResultHandler
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.slf4j.LoggerFactory
 
 class Agent(
     val scope: CoroutineScope,
-    agentCreator: AgentService,
-    commandQueue: CommandQueue = DefaultCommandQueue(agentCreator.kord),
-    private val customResultHandler: ResultHandler<Any>? = null
+    val id: AgentIdentifier,
+    val kord: Kord
 ) : CoroutineScope by scope {
 
-    private lateinit var shellOperator: ShellOperator
-    private lateinit var discordEventDispatcher: DiscordEventDispatcher
-    val id: AgentIdentifier = agentCreator.agentIdentifierGenerator()
+    private val logger = LoggerFactory.getLogger(Agent::class.java)
+
+    val messageQueue: MutableList<Message> = mutableListOf()
 
     init {
-        initAgent(agentCreator, commandQueue)
-        scope.launch {
-            shellOperator.start()
-        }
-    }
-
-    fun initAgent(agentCreator: AgentService, commandQueue: CommandQueue) {
-        shellOperator = DefaultShellOperator(
-            agentCreator.shellService,
-            this,
-            commandQueue,
-            customResultHandler
-        )
-        discordEventDispatcher = DefaultDiscordEventDispatcher(agentCreator.kord, this, commandQueue)
-        discordEventDispatcher.setId(id)
+        kord.events.onEach { event ->
+            logger.info("Received event: $event")
+            if (event is MessageCreateEvent) {
+                messageQueue.add(event.message)
+            }
+        }.launchIn(this)
     }
 
     override fun toString(): String = "Agent(id=$id)"
+
 }

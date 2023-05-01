@@ -9,15 +9,16 @@ import org.springframework.stereotype.Service
 
 @Service
 class AgentService(val shellService: ShellService, val kord: Kord) {
-    val agentIdentifierGenerator = Fixtures.fixtureWithFaker()
+    val fixture = Fixtures.fixtureWithFaker()
     suspend fun createAgent(
         scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+        kord:Kord = this.kord,
         customResultHandler: ResultHandler<Any>? = null
     ): Agent =
         Agent(
             scope = scope,
-            agentCreator = this,
-            customResultHandler = customResultHandler
+            id = fixture(),
+            kord = kord
         )
 }
 

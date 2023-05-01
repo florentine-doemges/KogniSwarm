@@ -10,6 +10,8 @@ import org.springframework.shell.InputProvider
 @Configuration
 class DiscordConfig {
     @Bean
-    fun kord(@Value("\${discord.token}") token: String): Kord = runBlocking { Kord(token) }
-
+    fun kord(@Value("\${discord.token}") token: String): Kord = runBlocking {
+        Kord(token).apply { login() }
+    }
 }
+

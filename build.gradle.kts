@@ -22,7 +22,7 @@ extra["testcontainersVersion"] = "1.17.6"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework:spring-web")
-    implementation("org.springframework.shell:spring-shell-starter")
+    implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("org.seleniumhq.selenium:selenium-java:4.8.3")
@@ -35,6 +35,7 @@ dependencies {
     implementation("dev.kord:kord-core:0.9.0")
     implementation("com.appmattus.fixture:fixture:1.2.0")
     implementation("com.appmattus.fixture:fixture-javafaker:1.2.0")
+    implementation("org.jline:jline:3.23.0")
 
     testImplementation("org.jbehave:jbehave-core:5.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -1,5 +1,5 @@
 package net.doemges.kogniswarm.discord
 
-import dev.kord.core.event.Event
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
-data class EventWrapper(val event: Event, var reaction: Reaction<String>? = null)
+data class EventWrapper(val event: MessageReceivedEvent, var reaction: Reaction<String>? = null)

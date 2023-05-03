@@ -1,58 +1,48 @@
 package net.doemges.kogniswarm.discord
 
-import dev.kord.common.entity.Snowflake
-import dev.kord.core.Kord
-import dev.kord.core.entity.Message
-import dev.kord.core.entity.channel.MessageChannel
-import dev.kord.core.event.message.MessageCreateEvent
-import dev.kord.gateway.Gateway
-import dev.kord.gateway.Intent
-import dev.kord.gateway.Intents
-import dev.kord.gateway.PrivilegedIntent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.doemges.kogniswarm.io.Request
-import net.doemges.kogniswarm.io.Response
+import net.dv8tion.jda.api.JDA
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.concurrent.atomic.AtomicBoolean
 
-@OptIn(PrivilegedIntent::class)
 @Service
 class DiscordService(
-    private val kord: Kord,
+    private val jda: JDA,
     val discordEventChannel: Channel<Request<EventWrapper>>
 ) {
 
+    private val logger: Logger = LoggerFactory.getLogger(DiscordService::class.java)
+
     private final val scope = CoroutineScope(Dispatchers.IO)
 
-    private val channelId: Snowflake = Snowflake(1102449789146247168)
+    private val channelId: Long = 1102449789146247168
+
+    val ready = AtomicBoolean(false)
 
     init {
+        logger.info("Initializing DiscordService")
+        jda.addEventListener(MessageListener(discordEventChannel))
+
         scope.launch {
-            kord.events.filterIsInstance<MessageCreateEvent>()
-                    .collect { messageCreateEvent ->
-                        val responseChannel: Channel<Response<EventWrapper>> = Channel()
-                        discordEventChannel.send(Request(EventWrapper(messageCreateEvent), responseChannel))
-                        val response = responseChannel.receive()
-                        response.message.reaction?.also {
-                            messageCreateEvent.message.channel.createMessage(it.message)
-                        }
-                    }
-            kord.login {
-                intents = Intents.nonPrivileged + Intent.MessageContent
-            }
+            jda.awaitReady()
+            ready.set(true)
+            logger.info("JDA is ready")
         }
     }
 
     suspend fun sendMessage(message: String) {
-        kord.getChannelOf<MessageChannel>(channelId)
-                ?.createMessage(message)
-
+        val textChannel = jda.getTextChannelById(channelId)
+        val sendMessage = textChannel?.sendMessage(message)
+        sendMessage?.queue{
+            logger.info("Message sent")
+        }
     }
 
 }
-

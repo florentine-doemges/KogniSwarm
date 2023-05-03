@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 
 plugins {
     id("org.springframework.boot") version "3.0.6"
@@ -14,7 +15,10 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-}
+    maven {
+        name = "m2-dv8tion"
+        url = URI("https://m2.dv8tion.net/releases")
+    }}
 
 extra["springShellVersion"] = "3.0.2"
 extra["testcontainersVersion"] = "1.17.6"
@@ -32,10 +36,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:1.7.22")
     implementation("org.jetbrains.kotlin:kotlin-script-util:1.7.22")
     implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:1.7.22")
-    implementation("dev.kord:kord-core:0.9.0")
     implementation("com.appmattus.fixture:fixture:1.2.0")
     implementation("com.appmattus.fixture:fixture-javafaker:1.2.0")
     implementation("org.jline:jline:3.23.0")
+    implementation("net.dv8tion:JDA:4.4.0_350")
 
     testImplementation("org.jbehave:jbehave-core:5.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

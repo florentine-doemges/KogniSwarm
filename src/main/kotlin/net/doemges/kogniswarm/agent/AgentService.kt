@@ -1,18 +1,20 @@
 package net.doemges.kogniswarm.agent
 
-import dev.kord.core.event.message.MessageCreateEvent
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import net.doemges.kogniswarm.data.Fixtures
 import net.doemges.kogniswarm.discord.DiscordService
-import net.doemges.kogniswarm.discord.EventWrapper
 import net.doemges.kogniswarm.discord.Reaction
 import net.doemges.kogniswarm.io.Request
 import net.doemges.kogniswarm.io.Response
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -21,6 +23,8 @@ class AgentService(
     private val discordService: DiscordService,
     private val messageChannel: Channel<Request<String>>
 ) {
+
+    private val logger: Logger = LoggerFactory.getLogger(AgentService::class.java)
 
     private val agents = mutableMapOf<String, Agent>()
 
@@ -31,16 +35,24 @@ class AgentService(
     private val filteredChannel = discordService
             .discordEventChannel
             .receiveAsFlow()
-            .filter { it.message.event is MessageCreateEvent }
-            .filter { (it.message.event as MessageCreateEvent).message.content.startsWith("@") }
+            .filter { it.message.event.message.contentRaw.startsWith("@") }
 
     init {
-        repeat(5) {
-            Agent(fixture(), messageChannel).let { agent ->
-                agents[agent.id.name] = agent
-                scope.launch { discordService.sendMessage("Agent ${agent.id.name} is ready") }
+        scope.launch {
+            while (!discordService.ready.get()) {
+                logger.info("Waiting for Discord to be ready")
+                delay(1000)
+            }
+            repeat(5) {
+                Agent(fixture(), messageChannel).let { agent ->
+                    agents[agent.id.name] = agent
+                    val message = "Agent ${agent.id.name} is ready"
+                    logger.info(message)
+                    discordService.sendMessage(message)
+                }
             }
         }
+
     }
 
 
@@ -48,8 +60,8 @@ class AgentService(
     fun setup() {
         scope.launch {
             filteredChannel.collect { request ->
-                val event = request.message.event as MessageCreateEvent
-                val message = event.message.content
+                val event = request.message.event as MessageReceivedEvent
+                val message = event.message.contentRaw
                 val agent = message.substringBefore(" ")
                 val command = message.substringAfter(" ")
                 executeCommand(agent, command)?.also {
@@ -61,7 +73,6 @@ class AgentService(
     }
 
     private suspend fun executeCommand(agent: String, command: String): String? = agents[agent]?.executeCommand(command)
-
 
 }
 

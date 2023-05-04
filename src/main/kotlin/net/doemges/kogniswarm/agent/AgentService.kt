@@ -20,8 +20,7 @@ import java.util.*
 
 @Service
 class AgentService(
-    private val discordService: DiscordService,
-    private val messageChannel: Channel<Request<String>>
+    private val discordService: DiscordService, private val messageChannel: Channel<Request<String>>
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(AgentService::class.java)
@@ -32,10 +31,19 @@ class AgentService(
 
     private final val scope = CoroutineScope(Dispatchers.IO)
 
-    private val filteredChannel = discordService
-            .discordEventChannel
-            .receiveAsFlow()
-            .filter { it.message.event.message.contentRaw.startsWith("@") }
+    private val filteredChannel = discordService.discordEventChannel.receiveAsFlow()
+            .filter { req -> agents.keys.any { req.message.event.message.contentRaw.startsWith("@$it ") } }
+            .onEach { logger.info("Message received: ${it.message.event.message.contentRaw}") }
+            .onEach { req ->
+                val name = req.message.event.message.contentRaw.substringAfter("@")
+                        .substringBefore(" ")
+
+                agents[name]?.let { agent ->
+                    val command = req.message.event.message.contentRaw.substringAfter(" ")
+                    agent.executeCommand(command)
+                            .also { req.message.reaction = Reaction(it) }
+                }
+            }
 
     init {
         scope.launch {
@@ -79,7 +87,8 @@ class AgentService(
 class Agent(val id: AgentIdentifier, private val messageChannel: Channel<Request<String>>) {
     suspend fun executeCommand(command: String): String = Channel<Response<String>>().let { responseChannel ->
         messageChannel.send(Request(command, responseChannel))
-        responseChannel.receive().message
+        val message = responseChannel.receive().message
+        "Agent ${id.name}: $message"
     }
 
 }

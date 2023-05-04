@@ -3,11 +3,15 @@ package net.doemges.kogniswarm.chat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.launch
 import net.doemges.kogniswarm.chat.model.ChatCompletionRequest
 import net.doemges.kogniswarm.chat.model.ChatCompletionResponse
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
+import net.doemges.kogniswarm.io.Request
+import net.doemges.kogniswarm.io.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpMethod
@@ -21,11 +25,22 @@ import java.io.IOException
 class ChatService @Autowired constructor(
     private val restTemplate: RestTemplate,
     private val chatCompletionRequestFactory: ChatCompletionRequestFactory,
+    private val unparseablesChannel: Channel<Request<String>>,
     @Value("\${openai.api.key}") private val apiKey: String? = null
 ) {
-
-
     private val scope = CoroutineScope(Dispatchers.IO)
+
+    init {
+        scope.launch {
+            for (request in unparseablesChannel) {
+                val message = request.message
+                val result = sendToChatGpt(ChatMessageBundle.fromInput(message))
+                val responseChannel = request.response
+                responseChannel.send(Response(result))
+            }
+        }
+    }
+
 
     fun sendToChatGpt(input: ChatMessageBundle): String {
         val request = chatCompletionRequestFactory.createChatCompletionRequest(input)

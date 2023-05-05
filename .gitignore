@@ -65,3 +65,5 @@ replay_pid*
 >>>>>>> origin/main
 /src/test/resources/application-test.properties
 /src/main/resources/url-content-cache.json
+/src/main/resources/memory/
+/src/main/resources/agent_identifiers.json

@@ -8,13 +8,11 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import com.appmattus.kotlinfixture.decorator.fake.javafaker.javaFakerStrategy
 import com.appmattus.kotlinfixture.kotlinFixture
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ChannelIterator
 import kotlinx.coroutines.channels.onClosed
 import kotlinx.coroutines.test.runTest
 import net.doemges.kogniswarm.chat.model.ChatCompletionRequest
@@ -63,49 +61,11 @@ class ChatServiceTest {
         chatService = ChatService(
             restTemplate,
             chatCompletionRequestFactory,
+            mockk(),
             "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"
         )
     }
 
-    @Test
-    fun `sendToChatGpt with ReceiveChannel should return ReceiveChannel with responses`() = runTest {
-        // Prepare mock data
-        val inputChannel = Channel<ChatMessageBundle>(1)
-        val chatMessageBundle = fixture<ChatMessageBundle>()
-        val chatCompletionRequest = fixture<ChatCompletionRequest>()
-        val chatCompletionResponse = fixture<ChatCompletionResponse>()
-        val responseEntity = ResponseEntity(chatCompletionResponse, HttpStatus.OK)
-
-        // Configure mock behaviors
-        every { chatCompletionRequestFactory.createChatCompletionRequest(chatMessageBundle) } returns chatCompletionRequest
-        val urlSlot = slot<String>()
-        val requestSlot = slot<ChatCompletionRequestWrapper>()
-        coEvery {
-            restTemplate.exchange(
-                capture(urlSlot),
-                eq(HttpMethod.POST),
-                capture(requestSlot),
-                eq(ChatCompletionResponse::class.java)
-            )
-        } returns responseEntity
-
-        // Call the function under test
-        val outputChannel = chatService.sendToChatGpt(inputChannel)
-
-        // Send data through the input channel
-        inputChannel.send(chatMessageBundle)
-
-        // Verify the response in the output channel using awaitility
-        val response = mutableListOf<String>()
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted {
-            outputChannel.tryReceive().onClosed { if (it != null) throw it }.getOrNull()?.let { response.add(it) }
-            assertThat(response).containsExactly(chatCompletionResponse.choices[0].message.content)
-        }
-
-        // Clean up channels
-        inputChannel.close()
-        outputChannel.cancel()
-    }
 
     @Test
     fun `sendToChatGpt with ChatMessageBundle should return the correct response`() = runTest {

@@ -25,6 +25,7 @@ class MessageListener(private val discordEventChannel: Channel<Request<EventWrap
                 discordEventChannel.send(Request(EventWrapper(event), responseChannel))
                 val response = responseChannel.receive()
                 response.message.reaction?.also {
+                    logger.info("Message processed: ${event.message.contentRaw}")
                     event.channel.sendMessage(it.message)
                             .queue()
                 }

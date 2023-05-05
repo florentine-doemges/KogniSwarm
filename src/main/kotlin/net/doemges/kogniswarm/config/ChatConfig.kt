@@ -2,13 +2,12 @@ package net.doemges.kogniswarm.config
 
 import kotlinx.coroutines.channels.Channel
 import net.doemges.kogniswarm.io.Request
-import net.doemges.kogniswarm.shell.ShellTask
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class ShellConfig {
+class ChatConfig {
     @Bean
-    fun shellChannel(): Channel<Request<ShellTask>> = Channel(1024)
+    fun chatGptChannel(): Channel<Request<String>> = Channel(1024)
 
 }

@@ -1,14 +1,19 @@
 package net.doemges.kogniswarm
 
+import net.doemges.kogniswarm.config.Neo4jProperties
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 
 @SpringBootApplication
+@EnableConfigurationProperties(Neo4jProperties::class)
 class KogniSwarmApplication {
 
-    @Bean
+//    @Bean
+//    @Profile("dev")
     fun keepAliveRunner(): CommandLineRunner {
         return CommandLineRunner {
             val lock = Object()

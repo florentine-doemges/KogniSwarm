@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore
 
 class ContainerPool(private val poolSize: Int) {
 
-    val pool = ConcurrentLinkedQueue<BrowserContainer>()
+    private val pool = ConcurrentLinkedQueue<BrowserContainer>()
     private val available = Semaphore(poolSize)
     private val logger = LoggerFactory.getLogger(ContainerPool::class.java)
 

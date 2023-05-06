@@ -5,7 +5,6 @@ import net.doemges.kogniswarm.io.Request
 import net.doemges.kogniswarm.io.Response
 import net.doemges.kogniswarm.memory.Memento
 import net.doemges.kogniswarm.memory.Memory
-import net.doemges.kogniswarm.shell.ShellTask
 import net.dv8tion.jda.api.entities.Message
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -36,6 +35,4 @@ class Agent(
         val memento = Memento(agentId = id.id.toString(), authorId = message.author.name, content = msg)
         memory.commit(memento)
     }
-
 }
-

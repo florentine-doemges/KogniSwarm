@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.doemges.kogniswarm.io.Request
 import net.doemges.kogniswarm.io.Response
 import org.jline.builtins.ConfigurationPath

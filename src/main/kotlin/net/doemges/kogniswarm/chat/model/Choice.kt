@@ -1,7 +1,6 @@
 package net.doemges.kogniswarm.chat.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 
 /**
  * Choice represents a single generated choice for the input message.

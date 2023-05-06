@@ -2,15 +2,14 @@ package net.doemges.kogniswarm.http
 
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
+import net.doemges.kogniswarm.chat.ChatService
+import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.concurrent.TimeUnit
-import net.doemges.kogniswarm.chat.ChatService
-import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 
 @SpringBootTest
 class UrlSummaryServiceTest {

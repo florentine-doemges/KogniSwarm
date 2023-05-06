@@ -2,9 +2,6 @@ package net.doemges.kogniswarm.shell
 
 import org.jline.console.CmdDesc
 import org.jline.console.CommandRegistry
-import org.jline.reader.Completer
-import org.jline.reader.impl.completer.AggregateCompleter
-import org.jline.reader.impl.completer.StringsCompleter
 import org.jline.reader.impl.completer.SystemCompleter
 
 class CustomCommandRegistry(commands: List<Command> = emptyList()) : CommandRegistry {

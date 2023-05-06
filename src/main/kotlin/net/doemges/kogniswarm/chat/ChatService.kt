@@ -41,13 +41,13 @@ class ChatService @Autowired constructor(
         }
     }
 
-
     fun sendToChatGpt(input: ChatMessageBundle): String {
         val request = chatCompletionRequestFactory.createChatCompletionRequest(input)
         val response: ChatCompletionResponse = createCompletion(request)
         return response.choices[0].message.content
     }
 
+    @Suppress("unused")
     fun sendToChatGpt(input: ReceiveChannel<ChatMessageBundle>): ReceiveChannel<String> = scope.produce {
         for (chatMessageBundle in input) {
             send(sendToChatGpt(chatMessageBundle))
@@ -73,6 +73,4 @@ class ChatService @Autowired constructor(
 
         return responseEntity.body!!
     }
-
-
 }

@@ -15,7 +15,6 @@ import java.time.Duration
 class BrowserContainerTest {
 
     private lateinit var container: BrowserContainer
-    private val fixture = kotlinFixture()
 
     @BeforeEach
     fun setUp() {

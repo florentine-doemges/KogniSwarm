@@ -10,7 +10,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.getForObject
 
 class TikTokenTest {
 

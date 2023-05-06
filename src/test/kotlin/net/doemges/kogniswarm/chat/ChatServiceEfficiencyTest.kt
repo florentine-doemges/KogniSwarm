@@ -7,10 +7,8 @@ import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import org.jbehave.core.annotations.Given
 import org.jbehave.core.annotations.When
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Duration
 
 @SpringBootTest

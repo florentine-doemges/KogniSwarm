@@ -34,6 +34,7 @@ class SeleniumRestTemplate(
         return executeOnUrl(uriTemplate, responseExtractor)
     }
 
+    @Suppress("SameParameterValue")
     private fun <T> SeleniumRestTemplate.executeOnUrl(
         url: String,
         responseExtractor: ResponseExtractor<T>?

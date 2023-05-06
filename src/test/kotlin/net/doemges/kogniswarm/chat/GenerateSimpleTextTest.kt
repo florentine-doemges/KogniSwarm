@@ -6,23 +6,15 @@ import assertk.assertions.*
 import net.doemges.kogniswarm.chat.model.ChatMessage
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import net.doemges.kogniswarm.chat.model.Role
-import org.awaitility.Awaitility.await
 import org.jbehave.core.annotations.Given
 import org.jbehave.core.annotations.Then
 import org.jbehave.core.annotations.When
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.api.extension.TestWatcher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.TestPropertySource
-import org.springframework.web.client.RestTemplate
-import java.util.concurrent.TimeUnit
 
 @SpringBootTest
 class GenerateSimpleTextTest {

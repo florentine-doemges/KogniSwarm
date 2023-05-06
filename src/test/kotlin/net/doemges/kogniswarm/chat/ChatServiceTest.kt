@@ -1,33 +1,25 @@
-@file:OptIn(InternalCoroutinesApi::class, InternalCoroutinesApi::class)
 
 package net.doemges.kogniswarm.chat
 
 import assertk.assertThat
-import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
-import assertk.assertions.isFailure
 import com.appmattus.kotlinfixture.decorator.fake.javafaker.javaFakerStrategy
 import com.appmattus.kotlinfixture.kotlinFixture
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ChannelIterator
-import kotlinx.coroutines.channels.onClosed
 import kotlinx.coroutines.test.runTest
 import net.doemges.kogniswarm.chat.model.ChatCompletionRequest
 import net.doemges.kogniswarm.chat.model.ChatCompletionResponse
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
-import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
-import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChatServiceTest {

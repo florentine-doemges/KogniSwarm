@@ -22,8 +22,8 @@ class SummaryService(private val chatService: ChatService, restTemplate: RestTem
                     val tokenized = tokenizer.tokenize(it)
                     val chunked = tokenized.chunked(maxChunkSize)
                     chunked
-                            .also {
-                                println("TextSummarizer: ${it.size} chunks")
+                            .also { chunks ->
+                                println("TextSummarizer: ${chunks.size} chunks")
                             }
                             .let { chunks ->
                                 summarizeChunks(chunks, summaryMode, maxChunkSize)

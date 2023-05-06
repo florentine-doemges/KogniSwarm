@@ -3,7 +3,6 @@ package net.doemges.kogniswarm.discord
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.doemges.kogniswarm.io.Request
 import net.dv8tion.jda.api.JDA

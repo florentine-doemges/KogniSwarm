@@ -25,14 +25,14 @@ import java.io.IOException
 class ChatService @Autowired constructor(
     private val restTemplate: RestTemplate,
     private val chatCompletionRequestFactory: ChatCompletionRequestFactory,
-    private val unparseablesChannel: Channel<Request<String>>,
+    private val chatGptChannel: Channel<Request<String>>,
     @Value("\${openai.api.key}") private val apiKey: String? = null
 ) {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         scope.launch {
-            for (request in unparseablesChannel) {
+            for (request in chatGptChannel) {
                 val message = request.message
                 val result = sendToChatGpt(ChatMessageBundle.fromInput(message))
                 val responseChannel = request.response

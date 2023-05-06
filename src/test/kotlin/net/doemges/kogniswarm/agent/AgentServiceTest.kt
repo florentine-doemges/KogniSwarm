@@ -44,7 +44,6 @@ class AgentServiceTest(
         val testAgent = Agent(
             testAgentIdentifier,
             chatGptChannel,
-            shellChannel,
             memoryService.createMemory(testAgentIdentifier.id.toString())
         )
 

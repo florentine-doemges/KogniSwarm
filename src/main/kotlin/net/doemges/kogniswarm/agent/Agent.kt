@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory
 class Agent(
     val id: AgentIdentifier,
     private val chatGptChannel: Channel<Request<String>>,
-    private val shellChannel: Channel<Request<ShellTask>>,
     private val memory: Memory<String>
 ) {
 

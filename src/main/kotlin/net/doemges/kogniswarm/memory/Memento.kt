@@ -3,11 +3,12 @@ package net.doemges.kogniswarm.memory
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.GeneratedValue
 import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Relationship
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator
 import java.time.Instant
 import java.util.*
 
-@Node("Memento")
+@Node
 data class Memento(
     @Id
     @GeneratedValue(UUIDStringGenerator::class)
@@ -18,4 +19,8 @@ data class Memento(
     val authorId: String,
     val content: String,
     val timestamp: Instant = Instant.now()
-)
+
+){
+    override fun toString(): String =
+        "Memento(uuid='$uuid', agentId='$agentId', authorId='$authorId', content='$content', timestamp=$timestamp)"
+}

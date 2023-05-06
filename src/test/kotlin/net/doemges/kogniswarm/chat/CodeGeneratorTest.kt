@@ -11,6 +11,7 @@ import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -21,6 +22,7 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 
 @SpringBootTest
+@Testcontainers
 class CodeGeneratorTest {
 
     private val input: ChatMessageBundle =

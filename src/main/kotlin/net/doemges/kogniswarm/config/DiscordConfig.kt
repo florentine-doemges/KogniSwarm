@@ -1,8 +1,5 @@
 package net.doemges.kogniswarm.config
 
-import net.doemges.kogniswarm.discord.EventWrapper
-import net.doemges.kogniswarm.io.Request
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -18,7 +15,4 @@ class DiscordConfig {
                 .build()
                 .awaitReady()
     }
-
-    @Bean
-    fun discordEventChannel(): Channel<Request<EventWrapper>> = Channel(1024)
 }

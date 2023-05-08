@@ -1,38 +1,62 @@
 package net.doemges.kogniswarm.agent
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import net.doemges.kogniswarm.io.Request
-import net.doemges.kogniswarm.io.Response
-import net.doemges.kogniswarm.memory.Memento
-import net.doemges.kogniswarm.memory.Memory
-import net.dv8tion.jda.api.entities.Message
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.launch
+import net.doemges.kogniswarm.assistant.AssistantRequest
+import net.doemges.kogniswarm.assistant.AssistantResponse
+import net.doemges.kogniswarm.discord.DiscordRequest
+import net.doemges.kogniswarm.discord.DiscordResponse
+import net.doemges.kogniswarm.io.MessageProcessor
+import net.doemges.kogniswarm.io.RequestMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+
 class Agent(
-    val id: AgentIdentifier,
-    private val chatGptChannel: Channel<Request<String>>,
-    private val memory: Memory<String>
-) {
+    val identifier: AgentIdentifier,
+    private val assistant: SendChannel<RequestMessage<AssistantRequest, AssistantResponse>>,
+    val output: SendChannel<RequestMessage<DiscordRequest, DiscordResponse>>,
+    val channel: Channel<RequestMessage<AgentRequest, AgentResponse>> = Channel(),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : MessageProcessor(identifier.id.toString()), CoroutineScope by scope {
+
+    companion object {
+        const val CHANNEL_ID = "1102449789146247168"
+    }
 
     private val logger: Logger = LoggerFactory.getLogger(Agent::class.java)
 
-    suspend fun processInput(
-        input: String,
-        message: Message
-    ): String = Channel<Response<String>>().let { responseChannel ->
-        logger.info("Processing input: $input")
-        commitToMemory(message, input)
-        chatGptChannel.send(Request(input, responseChannel))
-        val msg = responseChannel.receive().message
-        val result = "Agent ${id.name}: $msg"
-        commitToMemory(message, msg)
-        logger.info(result)
-        result
+    init {
+        launch {
+            output.send(
+                RequestMessage(
+                    DiscordRequest(
+                        message = "Agent ${identifier.name} is ready.",
+                        channelId = CHANNEL_ID
+                    )
+                )
+            )
+        }
+        launch {
+            for (message in channel) {
+                logger.info("Received message: $message")
+                val req = RequestMessage<AssistantRequest, AssistantResponse>(
+                    AssistantRequest(
+                        message.payload.content
+                    )
+                )
+                logger.info("Sending request: $req")
+                assistant.send(req)
+                logger.info("Sent request")
+                val response = req.receive()
+                logger.info("Received response: $response")
+                message.respond(AgentResponse("${identifier.name}: ${response.payload.response}"))
+                logger.info("Sent response")
+            }
+        }
     }
 
-    private fun commitToMemory(message: Message, msg: String) {
-        val memento = Memento(agentId = id.id.toString(), authorId = message.author.name, content = msg)
-        memory.commit(memento)
-    }
 }

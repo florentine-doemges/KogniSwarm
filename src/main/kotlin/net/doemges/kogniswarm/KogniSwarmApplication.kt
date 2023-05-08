@@ -1,5 +1,7 @@
 package net.doemges.kogniswarm
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.debug.DebugProbes
 import net.doemges.kogniswarm.config.Neo4jProperties
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -10,8 +12,6 @@ import org.springframework.boot.runApplication
 @EnableConfigurationProperties(Neo4jProperties::class)
 class KogniSwarmApplication {
 
-//    @Bean
-//    @Profile("dev")
     fun keepAliveRunner(): CommandLineRunner {
         return CommandLineRunner {
             val lock = Object()
@@ -24,8 +24,9 @@ class KogniSwarmApplication {
     }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("SpreadOperator")
 fun main(args: Array<String>) {
-
+    DebugProbes.install()
     runApplication<KogniSwarmApplication>(*args)
-
 }

@@ -21,7 +21,9 @@ import java.util.zip.GZIPInputStream
 @Configuration
 class HttpClientConfig {
 
-    private val logger = LoggerFactory.getLogger(HttpClientConfig::class.java)
+    companion object {
+        const val POOL_SIZE = 5
+    }
 
     @Bean
     fun loggingInterceptor(): ClientHttpRequestInterceptor = LoggingInterceptor()
@@ -33,15 +35,14 @@ class HttpClientConfig {
     fun seleniumRestTemplate(
         cache: UrlContentCache,
         loggingInterceptor: ClientHttpRequestInterceptor,
-        gzipResponseInterceptor: GzipResponseInterceptor,
-        objectMapper: ObjectMapper
+        gzipResponseInterceptor: GzipResponseInterceptor
     ): SeleniumRestTemplate {
         val requestFactory = SimpleClientHttpRequestFactory().apply {
             setBufferRequestBody(true)
         }
         val interceptors = listOf(loggingInterceptor, gzipResponseInterceptor)
 
-        return SeleniumRestTemplate(requestFactory, interceptors, 5, cache)
+        return SeleniumRestTemplate(requestFactory, interceptors, POOL_SIZE, cache)
     }
 
     @Bean

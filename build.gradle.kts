@@ -30,6 +30,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.6.4")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
     implementation("org.seleniumhq.selenium:selenium-java:4.8.3")
@@ -46,6 +47,7 @@ dependencies {
     implementation("org.jline:jline:3.23.0")
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation("org.jbehave:jbehave-core:5.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -1,10 +1,5 @@
 package net.doemges.kogniswarm.chat
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.produce
 import net.doemges.kogniswarm.chat.model.ChatCompletionRequest
 import net.doemges.kogniswarm.chat.model.ChatCompletionResponse
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
@@ -16,7 +11,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import java.io.IOException
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Service
 class ChatService @Autowired constructor(
     private val restTemplate: RestTemplate,

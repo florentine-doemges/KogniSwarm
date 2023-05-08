@@ -33,7 +33,7 @@ class AgentManager(
 
 
     private val targetSize = 1
-    val agents: MutableMap<String, Agent> = mutableMapOf()
+    private val agents: MutableMap<String, Agent> = mutableMapOf()
 
     init {
         try {

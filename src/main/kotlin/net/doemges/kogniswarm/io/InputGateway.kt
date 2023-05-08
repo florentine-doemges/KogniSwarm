@@ -17,7 +17,7 @@ class InputGateway<T, R>(
     id: String,
     private val inputChannel: Channel<RequestMessage<T, R>>,
     private val inputProcessor: InputProcessor<T, R>,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    @Suppress("unused") scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : Component<InputGateway<T, R>>(id), CoroutineScope by scope {
 
     private val logger: Logger = LoggerFactory.getLogger(InputGateway::class.java)

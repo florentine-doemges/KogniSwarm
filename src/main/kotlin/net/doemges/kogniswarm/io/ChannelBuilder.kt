@@ -6,7 +6,7 @@ class ChannelBuilder<X : Message<*>> {
     fun build(): Channel<X> = Channel()
 }
 
-fun <X : Message<*>> createChannel(block: ChannelBuilder<X>.() -> Unit = {}): Channel<X> = ChannelBuilder<X>().run {
+fun <X : Message<*>> createChannel(@Suppress("unused") block: ChannelBuilder<X>.() -> Unit = {}): Channel<X> = ChannelBuilder<X>().run {
     block()
     build()
 }

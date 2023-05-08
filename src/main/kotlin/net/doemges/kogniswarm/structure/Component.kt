@@ -5,7 +5,10 @@ open class ComponentBuilder<out X : Component<X>>(protected val id: String) {
     open fun build(): Component<X> = Component(id)
 }
 
-fun <T : Component<T>, X : ComponentBuilder<T>> createComponent(builder: X, block: X.() -> Unit = {}): Component<T> =
+fun <T : Component<T>, X : ComponentBuilder<T>> createComponent(
+    builder: X,
+    @Suppress("unused") block: X.() -> Unit = {}
+): Component<T> =
     builder.run {
         block()
         build()

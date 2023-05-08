@@ -15,9 +15,11 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.EventListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.math.log
 
-class DiscordInputProcessor(jda: JDA, scope: CoroutineScope = CoroutineScope(Dispatchers.IO)) :
+class DiscordInputProcessor(
+    jda: JDA,
+    @Suppress("unused") scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) :
     InputProcessor<DiscordRequest, DiscordResponse>, EventListener, CoroutineScope by scope {
 
     init {

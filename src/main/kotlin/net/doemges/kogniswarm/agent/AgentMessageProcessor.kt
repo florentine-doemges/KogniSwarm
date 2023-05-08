@@ -8,7 +8,6 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import net.doemges.kogniswarm.assistant.AssistantRequest
 import net.doemges.kogniswarm.assistant.AssistantResponse
 import net.doemges.kogniswarm.discord.DiscordRequest
@@ -24,7 +23,7 @@ class AgentMessageProcessor(
     val output: SendChannel<RequestMessage<DiscordRequest, DiscordResponse>>,
     assistant: SendChannel<RequestMessage<AssistantRequest, AssistantResponse>>,
     objectMapper: ObjectMapper,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    @Suppress("unused") scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : MessageProcessor(id), CoroutineScope by scope {
 
     private val logger: Logger = LoggerFactory.getLogger(AgentMessageProcessor::class.java)

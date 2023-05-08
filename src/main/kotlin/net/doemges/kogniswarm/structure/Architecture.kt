@@ -11,10 +11,10 @@ import net.doemges.kogniswarm.io.createChannel
 
 class Architecture(
     id: String,
-    val inputGateways: List<InputGateway<*, *>>,
-    val outputGateways: List<OutputGateway<*, *>>,
-    val messageProcessors: List<MessageProcessor>,
-    val channels: List<Channel<Message<*>>>
+    @Suppress("unused") val inputGateways: List<InputGateway<*, *>>,
+    @Suppress("unused") val outputGateways: List<OutputGateway<*, *>>,
+    @Suppress("unused") val messageProcessors: List<MessageProcessor>,
+    @Suppress("unused") val channels: List<Channel<Message<*>>>
 ) : Component<Architecture>(id)
 
 class ArchitectureBuilder(id: String) : ComponentBuilder<Architecture>(id) {

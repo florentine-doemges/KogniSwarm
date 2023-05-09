@@ -26,6 +26,7 @@ extra["testcontainersVersion"] = "1.17.6"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-aspects")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
@@ -48,6 +49,12 @@ dependencies {
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-core:1.10.6")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    runtimeOnly("org.aspectj:aspectjrt:1.9.19")
+    runtimeOnly("org.aspectj:aspectjweaver:1.9.19")
+
 
     testImplementation("org.jbehave:jbehave-core:5.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

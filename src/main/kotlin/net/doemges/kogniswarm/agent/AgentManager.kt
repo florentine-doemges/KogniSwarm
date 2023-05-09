@@ -13,14 +13,20 @@ import net.doemges.kogniswarm.io.RequestMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
+import javax.annotation.PostConstruct
 
 class AgentManager(
     private val assistant: SendChannel<RequestMessage<AssistantRequest, AssistantResponse>>,
-    val output: SendChannel<RequestMessage<DiscordRequest, DiscordResponse>>,
+    private val output: SendChannel<RequestMessage<DiscordRequest, DiscordResponse>>,
     private val objectMapper: ObjectMapper
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(AgentManager::class.java)
+
+    @PostConstruct
+    fun setup() {
+        logger.info("AgentManager created")
+    }
 
     private val agentFile = Paths.get("src/main/resources/agent_identifiers.json")
         .toFile()
@@ -60,6 +66,8 @@ class AgentManager(
             .addShutdownHook(Thread {
                 saveAgentsToFile()
             })
+
+        logger.info("AgentManager initialized")
     }
 
     private fun saveAgentsToFile() {

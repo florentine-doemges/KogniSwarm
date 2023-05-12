@@ -8,4 +8,6 @@ class ChatMessageBundle(vararg messages: ChatMessage?) : List<ChatMessage> by me
                 ChatMessage(Role.SYSTEM, systemInput).takeIf { systemInput != null }
             )
     }
+
+    override fun toString(): String = joinToString("\n")
 }

@@ -7,10 +7,12 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import net.doemges.kogniswarm.discord.DiscordRequest
-import net.doemges.kogniswarm.discord.DiscordResponse
+import net.doemges.kogniswarm.agent.model.AgentRequest
+import net.doemges.kogniswarm.agent.model.AgentResponse
+import net.doemges.kogniswarm.discord.model.DiscordRequest
+import net.doemges.kogniswarm.discord.model.DiscordResponse
 import net.doemges.kogniswarm.io.MessageProcessor
-import net.doemges.kogniswarm.io.RequestMessage
+import net.doemges.kogniswarm.io.model.RequestMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

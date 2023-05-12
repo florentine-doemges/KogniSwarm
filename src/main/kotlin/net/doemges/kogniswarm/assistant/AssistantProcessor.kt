@@ -1,5 +1,7 @@
 package net.doemges.kogniswarm.assistant
 
+import net.doemges.kogniswarm.assistant.model.AssistantRequest
+import net.doemges.kogniswarm.assistant.model.AssistantResponse
 import net.doemges.kogniswarm.chat.ChatService
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import net.doemges.kogniswarm.io.OutputProcessor

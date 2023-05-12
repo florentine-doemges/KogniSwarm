@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.agent
+package net.doemges.kogniswarm.agent.model
 
 import net.dv8tion.jda.api.entities.Message
 

@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.io
+package net.doemges.kogniswarm.io.model
 
 import kotlinx.coroutines.channels.Channel
 

@@ -1,5 +1,6 @@
 package net.doemges.kogniswarm.http
 
+import net.doemges.kogniswarm.http.model.Domain
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.exp

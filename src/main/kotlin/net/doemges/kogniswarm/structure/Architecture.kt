@@ -3,7 +3,7 @@ package net.doemges.kogniswarm.structure
 import kotlinx.coroutines.channels.Channel
 import net.doemges.kogniswarm.io.InputGateway
 import net.doemges.kogniswarm.io.InputGatewayBuilder
-import net.doemges.kogniswarm.io.Message
+import net.doemges.kogniswarm.io.model.Message
 import net.doemges.kogniswarm.io.MessageProcessor
 import net.doemges.kogniswarm.io.OutputGateway
 import net.doemges.kogniswarm.io.OutputGatewayBuilder

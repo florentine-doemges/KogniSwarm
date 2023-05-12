@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.discord
+package net.doemges.kogniswarm.discord.model
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 

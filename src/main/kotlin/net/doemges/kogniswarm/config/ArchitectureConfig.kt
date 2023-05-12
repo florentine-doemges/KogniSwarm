@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.doemges.kogniswarm.agent.AgentManager
 import net.doemges.kogniswarm.agent.AgentMessageProcessor
 import net.doemges.kogniswarm.assistant.AssistantProcessor
-import net.doemges.kogniswarm.assistant.AssistantRequest
-import net.doemges.kogniswarm.assistant.AssistantResponse
+import net.doemges.kogniswarm.assistant.model.AssistantRequest
+import net.doemges.kogniswarm.assistant.model.AssistantResponse
 import net.doemges.kogniswarm.chat.ChatService
 import net.doemges.kogniswarm.discord.DiscordInputProcessor
 import net.doemges.kogniswarm.discord.DiscordOutputProcessor
-import net.doemges.kogniswarm.discord.DiscordRequest
-import net.doemges.kogniswarm.discord.DiscordResponse
+import net.doemges.kogniswarm.discord.model.DiscordRequest
+import net.doemges.kogniswarm.discord.model.DiscordResponse
 import net.doemges.kogniswarm.io.InputGateway
 import net.doemges.kogniswarm.io.OutputGateway
 import net.doemges.kogniswarm.memory.MemoryService

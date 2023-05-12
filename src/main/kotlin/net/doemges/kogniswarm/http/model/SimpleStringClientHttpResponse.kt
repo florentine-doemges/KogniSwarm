@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.http
+package net.doemges.kogniswarm.http.model
 
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

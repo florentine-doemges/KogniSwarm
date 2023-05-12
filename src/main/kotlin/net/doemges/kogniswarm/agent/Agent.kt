@@ -5,13 +5,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
-import net.doemges.kogniswarm.assistant.AssistantRequest
-import net.doemges.kogniswarm.assistant.AssistantResponse
-import net.doemges.kogniswarm.discord.DiscordRequest
-import net.doemges.kogniswarm.discord.DiscordResponse
-import net.doemges.kogniswarm.io.Message
+import net.doemges.kogniswarm.agent.model.AgentRequest
+import net.doemges.kogniswarm.agent.model.AgentResponse
+import net.doemges.kogniswarm.assistant.model.AssistantRequest
+import net.doemges.kogniswarm.assistant.model.AssistantResponse
+import net.doemges.kogniswarm.discord.model.DiscordRequest
+import net.doemges.kogniswarm.discord.model.DiscordResponse
+import net.doemges.kogniswarm.io.model.Message
 import net.doemges.kogniswarm.io.MessageProcessor
-import net.doemges.kogniswarm.io.RequestMessage
+import net.doemges.kogniswarm.io.model.RequestMessage
 import net.doemges.kogniswarm.memory.Memory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -40,18 +42,23 @@ class Agent(
     private suspend fun messageLoop() {
         for (message in channel) {
             logger.info("Received message: $message")
-            memory.commit(message.payload)
+            memory.commit(message.payload.content)
             respond(message, receiveResponse(sendRequest(message)))
         }
     }
 
     private suspend fun readyMessage(output: SendChannel<RequestMessage<DiscordRequest, DiscordResponse>>) {
+        val context = memory.getContext()
+        val message = """Agent ${identifier.name} is ready.
+            | My recent past is:
+            | $context
+        """.trimMargin()
         val payload = DiscordRequest(
-            message = "Agent ${identifier.name} is ready.",
+            message = message,
             channelId = CHANNEL_ID
         )
         output.send(RequestMessage(payload))
-        memory.commit(payload)
+        memory.commit(payload.message)
     }
 
     private suspend fun respond(
@@ -60,7 +67,7 @@ class Agent(
     ) {
         val resp = AgentResponse("${identifier.name}: ${response.payload.response}", identifier, message.payload)
         message.respond(resp)
-        memory.commit(resp)
+        memory.commit(resp.response)
         logger.info("Sent response")
     }
 
@@ -76,7 +83,7 @@ class Agent(
         val req = RequestMessage<AssistantRequest, AssistantResponse>(
             AssistantRequest(
                 message.payload.content,
-                "Let me remind you of your recent past: ${memory.getContext()}"
+                "Your name is '${identifier.name}'. Let me remind you of your recent past: ${memory.getContext()}"
             )
         )
         logger.info("Sending request: $req")

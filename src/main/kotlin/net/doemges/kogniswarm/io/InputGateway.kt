@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import net.doemges.kogniswarm.io.model.Message
+import net.doemges.kogniswarm.io.model.RequestMessage
 import net.doemges.kogniswarm.structure.Component
 import net.doemges.kogniswarm.structure.ComponentBuilder
 import org.slf4j.Logger

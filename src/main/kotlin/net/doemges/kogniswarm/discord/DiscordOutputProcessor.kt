@@ -1,5 +1,7 @@
 package net.doemges.kogniswarm.discord
 
+import net.doemges.kogniswarm.discord.model.DiscordRequest
+import net.doemges.kogniswarm.discord.model.DiscordResponse
 import net.doemges.kogniswarm.io.OutputProcessor
 import net.dv8tion.jda.api.JDA
 

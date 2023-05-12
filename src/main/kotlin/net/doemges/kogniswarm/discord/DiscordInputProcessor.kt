@@ -7,8 +7,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.debug.DebugProbes
 import kotlinx.coroutines.launch
+import net.doemges.kogniswarm.discord.model.DiscordRequest
+import net.doemges.kogniswarm.discord.model.DiscordResponse
 import net.doemges.kogniswarm.io.InputProcessor
-import net.doemges.kogniswarm.io.Message
+import net.doemges.kogniswarm.io.model.Message
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.GenericEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent

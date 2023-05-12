@@ -1,6 +1,8 @@
 package net.doemges.kogniswarm.http
 
 import jakarta.annotation.PreDestroy
+import net.doemges.kogniswarm.http.model.Domain
+import net.doemges.kogniswarm.http.model.SimpleStringClientHttpResponse
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity

@@ -12,6 +12,8 @@ class SummaryService(private val chatService: ChatService, restTemplate: RestTem
 
     private val tokenizer = Tokenizer("gpt-3.5-turbo", restTemplate)
 
+    fun lengthInTokens(text: String): Int = tokenizer.tokenize(text).size
+
     fun summarizeText(
         text: String,
         maxChunkSize: Int = 4096,

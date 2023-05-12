@@ -1,7 +1,7 @@
 package net.doemges.kogniswarm.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.doemges.kogniswarm.http.ResponseWrapper
+import net.doemges.kogniswarm.http.model.ResponseWrapper
 import net.doemges.kogniswarm.http.SeleniumRestTemplate
 import net.doemges.kogniswarm.http.UrlContentCache
 import org.slf4j.LoggerFactory

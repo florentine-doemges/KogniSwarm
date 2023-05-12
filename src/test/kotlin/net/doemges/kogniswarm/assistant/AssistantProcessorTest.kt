@@ -5,6 +5,8 @@ import assertk.assertions.isEqualTo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import net.doemges.kogniswarm.assistant.model.AssistantRequest
+import net.doemges.kogniswarm.assistant.model.AssistantResponse
 import net.doemges.kogniswarm.chat.ChatService
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import org.junit.jupiter.api.Test
@@ -24,7 +26,7 @@ class AssistantProcessorTest {
         every { chatService.sendToChatGpt(ChatMessageBundle.fromInput(input)) } returns expectedResponseText
 
         // Execute
-        val response = assistantProcessor.processRequest(AssistantRequest(input))
+        val response = assistantProcessor.processRequest(AssistantRequest(input,""))
 
         // Verify
         verify { chatService.sendToChatGpt(any()) }

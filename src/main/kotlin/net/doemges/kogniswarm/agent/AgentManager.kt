@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import kotlinx.coroutines.channels.SendChannel
-import net.doemges.kogniswarm.assistant.AssistantRequest
-import net.doemges.kogniswarm.assistant.AssistantResponse
+import net.doemges.kogniswarm.assistant.model.AssistantRequest
+import net.doemges.kogniswarm.assistant.model.AssistantResponse
 import net.doemges.kogniswarm.data.Fixtures
-import net.doemges.kogniswarm.discord.DiscordRequest
-import net.doemges.kogniswarm.discord.DiscordResponse
-import net.doemges.kogniswarm.io.RequestMessage
+import net.doemges.kogniswarm.discord.model.DiscordRequest
+import net.doemges.kogniswarm.discord.model.DiscordResponse
+import net.doemges.kogniswarm.io.model.RequestMessage
 import net.doemges.kogniswarm.memory.MemoryService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

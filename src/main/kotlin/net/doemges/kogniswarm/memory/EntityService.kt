@@ -1,5 +1,6 @@
 package net.doemges.kogniswarm.memory
 
+import net.doemges.kogniswarm.memory.model.Entity
 import org.springframework.stereotype.Service
 
 @Service

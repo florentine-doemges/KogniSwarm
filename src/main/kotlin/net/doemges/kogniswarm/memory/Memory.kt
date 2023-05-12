@@ -1,13 +1,10 @@
 package net.doemges.kogniswarm.memory
 
-import net.doemges.kogniswarm.agent.AgentRequest
-import net.doemges.kogniswarm.agent.AgentResponse
 import net.doemges.kogniswarm.chat.ChatService
 import net.doemges.kogniswarm.chat.model.ChatMessageBundle
 import net.doemges.kogniswarm.data.DependencySorter
-import net.doemges.kogniswarm.discord.DiscordRequest
+import net.doemges.kogniswarm.memory.converter.StringConverter
 import net.doemges.kogniswarm.summary.SummaryService
-import net.dv8tion.jda.internal.entities.ReceivedMessage
 import kotlin.reflect.KClass
 
 class Memory(private val ownerId: String, memoryService: MemoryService) {
@@ -18,10 +15,7 @@ class Memory(private val ownerId: String, memoryService: MemoryService) {
     private val chatService: ChatService = memoryService.chatService
 
     private val converters: Map<KClass<*>, MemoryConverter<*>> = mapOf(
-        AgentRequest::class to AgentRequestConverter(),
-        AgentResponse::class to AgentResponseConverter(),
-        ReceivedMessage::class to ReceivedMessageConverter(),
-        DiscordRequest::class to DiscordRequestConverter()
+        String::class to StringConverter(),
     )
 
 
@@ -35,11 +29,10 @@ class Memory(private val ownerId: String, memoryService: MemoryService) {
             .onEach { entity ->
                 val summary = chatService.sendToChatGpt(
                     ChatMessageBundle.fromInput(
-                        "The item below is an entry in a database. Identify the relevant content and summarize it.\n ${
-                            objectMapper.writeValueAsString(
-                                entity
-                            )
-                        }"
+                        """Please provide a brief description based on the information given in the database entry below:
+                            | ${objectMapper.writeValueAsString(entity)}""".trimMargin(),
+                        """Provide a simple description based on the given entry in the database. 
+                            | Focus on the content of the entry and not on the technical details.""".trimMargin()
                     )
                 )
                 entity.summary = summary
@@ -47,53 +40,16 @@ class Memory(private val ownerId: String, memoryService: MemoryService) {
         entityService.commit(sorted)
     }
 
-    fun getContext(maxTokens: Int = 2048): String = summaryService
-        .summarizeText(
-            entityService.findByOwnerId(ownerId)
-                .joinToString("\n") { entity -> entity.summary ?: "" }, maxTokens
-        )
-}
-
-class AgentRequestConverter : MemoryConverter<AgentRequest> {
-    override fun convert(ownerId: String, content: AgentRequest): List<Entity> =
-        listOf(Entity(ownerId = ownerId, labels = listOf("AgentRequest")).apply {
-            properties["content"] = content.content
-            properties["channelId"] = content.message.channel.id
-            properties["guildId"] = content.message.guild.id
-        })
-
-
-}
-
-class DiscordRequestConverter : MemoryConverter<DiscordRequest> {
-    override fun convert(ownerId: String, content: DiscordRequest): List<Entity> =
-        listOf(Entity(ownerId = ownerId, labels = listOf("DiscordRequest")).apply {
-            properties["content"] = content.message ?: ""
-            properties["channelId"] = content.channelId ?: ""
-        })
-
+    fun getContext(maxTokens: Int = 2000): String = entityService
+        .findByOwnerId(ownerId)
+        .takeIf { it.isNotEmpty() }
+        ?.let { list ->
+            val text = list.joinToString("\n") { entity -> entity.summary ?: "" }
+            if (summaryService.lengthInTokens(text) > maxTokens)
+                summaryService.summarizeText(
+                    text, maxTokens
+                ) else text
+        } ?: "I have no memories yet."
 }
 
 
-interface MemoryConverter<T> {
-    fun convert(ownerId: String, content: T): List<Entity>
-}
-
-class AgentResponseConverter : MemoryConverter<AgentResponse> {
-    override fun convert(ownerId: String, content: AgentResponse): List<Entity> =
-        listOf(Entity(ownerId = ownerId, labels = listOf("AgentResponse")).apply {
-            properties["content"] = content.response
-            properties["channelId"] = content.request.message.channel.id
-            properties["guildId"] = content.request.message.guild.id
-        })
-}
-
-class ReceivedMessageConverter : MemoryConverter<ReceivedMessage> {
-
-    override fun convert(ownerId: String, content: ReceivedMessage): List<Entity> =
-        listOf(Entity(ownerId = ownerId, labels = listOf("ReceivedMessage")).apply {
-            properties["content"] = content.contentRaw
-            properties["channelId"] = content.channel.id
-            properties["guildId"] = content.guild.id
-        })
-}

@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.http
+package net.doemges.kogniswarm.http.model
 
 import java.net.URI
 

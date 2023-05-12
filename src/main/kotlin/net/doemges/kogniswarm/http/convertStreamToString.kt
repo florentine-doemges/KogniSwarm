@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm
+package net.doemges.kogniswarm.http
 
 import java.io.BufferedReader
 import java.io.InputStream

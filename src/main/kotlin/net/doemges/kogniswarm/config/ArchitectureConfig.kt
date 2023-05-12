@@ -13,17 +13,13 @@ import net.doemges.kogniswarm.discord.DiscordRequest
 import net.doemges.kogniswarm.discord.DiscordResponse
 import net.doemges.kogniswarm.io.InputGateway
 import net.doemges.kogniswarm.io.OutputGateway
+import net.doemges.kogniswarm.memory.MemoryService
 import net.doemges.kogniswarm.structure.Architecture
 import net.doemges.kogniswarm.structure.ArchitectureBuilder
 import net.doemges.kogniswarm.structure.createComponent
 import net.dv8tion.jda.api.JDA
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.EnableLoadTimeWeaving
-import org.springframework.context.annotation.Primary
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.instrument.classloading.LoadTimeWeaver
-import org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver
 
 
 @Configuration
@@ -36,6 +32,7 @@ class ArchitectureConfig {
     ): Architecture = createComponent(architectureBuilder) {
         messageProcessor(agentMessageProcessor)
     } as Architecture
+
 
     @Bean
     fun architectureBuilder() = ArchitectureBuilder("KogniSwarm")
@@ -54,8 +51,14 @@ class ArchitectureConfig {
     fun agentManager(
         discordOutputGateway: OutputGateway<DiscordRequest, DiscordResponse>,
         assistantOutputGateway: OutputGateway<AssistantRequest, AssistantResponse>,
-        objectMapper: ObjectMapper
-    ): AgentManager = AgentManager(assistantOutputGateway.output(), discordOutputGateway.output(), objectMapper)
+        objectMapper: ObjectMapper,
+        memoryService: MemoryService
+    ): AgentManager = AgentManager(
+        assistant = assistantOutputGateway.output(),
+        output = discordOutputGateway.output(),
+        objectMapper = objectMapper,
+        memoryService = memoryService
+    )
 
     @Bean
     fun assistantOutputGateway(chatService: ChatService, architectureBuilder: ArchitectureBuilder) =

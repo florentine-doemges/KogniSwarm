@@ -39,17 +39,24 @@ open class AgentMessageProcessor(
         logger.info("New message received in AgentMessageProcessor: $message")
         message.payload.event?.message?.contentRaw?.let {
             logger.info("Received message: $it")
-            if (it.startsWith("@")) {
-                val name = it.substringBefore(" ")
-                    .substringAfter("@")
-                logger.info("Name: $name")
-                val content = it.substringAfter(" ")
-                logger.info("Content: $content")
+
+            var content = it
+            val agentNames = agentManager.extractAgentNames(it)
+            logger.info("Agent names: $agentNames")
+            agentNames.forEach { agentName ->
+                while (content.contains("@$agentName")) {
+                    content = content.replace("@$agentName", "")
+                }
+            }
+            logger.info("Content: $content")
+
+            for (name in agentNames) {
                 agentManager.getByNameOrNull(name)
                     ?.also { agent ->
                         logger.info("Agent: $agent")
                         val channel = agent.channel
-                        val req = RequestMessage<AgentRequest, AgentResponse>(AgentRequest(content))
+                        val agentRequest = AgentRequest(content, message.payload.event.message)
+                        val req = RequestMessage<AgentRequest, AgentResponse>(agentRequest)
                         logger.info("Sending request: $req")
                         channel.send(req)
                         logger.info("Sent request")
@@ -58,11 +65,9 @@ open class AgentMessageProcessor(
                         message.respond(DiscordResponse(res.payload.response, message.payload))
                         logger.info("Sent response")
                     }
-            } else {
-                logger.info("Message does not start with @: $it")
             }
-
         }
     }
+
 }
 

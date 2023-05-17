@@ -3,24 +3,14 @@ package net.doemges.kogniswarm.agent
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import kotlinx.coroutines.channels.SendChannel
-import net.doemges.kogniswarm.assistant.model.AssistantRequest
-import net.doemges.kogniswarm.assistant.model.AssistantResponse
 import net.doemges.kogniswarm.data.Fixtures
-import net.doemges.kogniswarm.discord.model.DiscordRequest
-import net.doemges.kogniswarm.discord.model.DiscordResponse
-import net.doemges.kogniswarm.io.model.RequestMessage
-import net.doemges.kogniswarm.memory.MemoryService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.file.Paths
 import javax.annotation.PostConstruct
 
 class AgentManager(
-    private val assistant: SendChannel<RequestMessage<AssistantRequest, AssistantResponse>>,
-    private val output: SendChannel<RequestMessage<DiscordRequest, DiscordResponse>>,
-    private val objectMapper: ObjectMapper,
-    private val memoryService: MemoryService
+    private val objectMapper: ObjectMapper
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(AgentManager::class.java)
@@ -41,7 +31,7 @@ class AgentManager(
 
 
     private val targetSize = 1
-    private val agents: MutableMap<String, Agent> = mutableMapOf()
+    val agents: MutableMap<String, Agent> = mutableMapOf()
 
     init {
         try {
@@ -74,10 +64,11 @@ class AgentManager(
 
     fun extractAgentNames(messageContent: String): List<String> {
         val pattern = Regex(pattern = "@[a-zA-Z]+")
-        val possibleNames = pattern.findAll(messageContent).map { it.value.substring(1) }.toList()
+        val possibleNames = pattern.findAll(messageContent)
+            .map { it.value.substring(1) }
+            .toList()
         return possibleNames.filter { name -> agents.containsKey(name) }
     }
-
 
 
     private fun saveAgentsToFile() {
@@ -85,16 +76,9 @@ class AgentManager(
         logger.info("Saved ${agents.size} agents to file $agentFile")
     }
 
-    private fun createAgent(id: AgentIdentifier): Agent = Agent(
-        identifier = id,
-        assistant = assistant,
-        output = output,
-        memory = memoryService.createMemory(id.id.toString())
-    )
+    private fun createAgent(id: AgentIdentifier): Agent = Agent(identifier = id)
         .also { logger.info("Created agent ${id.id}") }
         .also { agents[id.name] = it }
 
-
-    fun getByNameOrNull(name: String): Agent? = agents[name]
 
 }

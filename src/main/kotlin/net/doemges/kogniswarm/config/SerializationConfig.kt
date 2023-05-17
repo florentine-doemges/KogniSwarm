@@ -10,12 +10,16 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class SerializationConfig {
 
-    @Bean
-    fun objectMapper(): ObjectMapper = jacksonObjectMapper().apply {
-        setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
-        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        registerModule(JavaTimeModule())
+    companion object {
+        fun objectMapper(): ObjectMapper = jacksonObjectMapper().apply {
+            setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
+            configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            registerModule(JavaTimeModule())
+        }
     }
+
+    @Bean
+    fun objectMapper(): ObjectMapper = SerializationConfig.objectMapper()
 }

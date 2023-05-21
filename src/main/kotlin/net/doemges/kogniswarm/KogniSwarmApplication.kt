@@ -1,15 +1,16 @@
 package net.doemges.kogniswarm
 
+import io.github.florentine_doemges.camel_discord.JDAComponent
+import io.github.florentine_doemges.camel_discord.config.JDAConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.debug.DebugProbes
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Import
 
 @SpringBootApplication
-//@EnableConfigurationProperties(Neo4jProperties::class)
-class KogniSwarmApplication {
-
-}
+@Import(JDAConfig::class, JDAComponent::class)
+class KogniSwarmApplication
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("SpreadOperator")

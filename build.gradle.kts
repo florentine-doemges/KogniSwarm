@@ -15,6 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         name = "m2-dv8tion"
         url = URI("https://m2.dv8tion.net/releases")
@@ -47,6 +48,10 @@ dependencies {
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("io.github.florentine-doemges:camel-discord:0.1.0")
+    implementation("org.apache.camel.springboot:camel-spring-boot-starter:4.0.0-M3")
+    implementation("com.aallam.openai:openai-client:3.2.3")
+    runtimeOnly("io.ktor:ktor-client-okhttp:2.3.0")
 
     runtimeOnly("org.aspectj:aspectjrt:1.9.19")
     runtimeOnly("org.aspectj:aspectjweaver:1.9.19")

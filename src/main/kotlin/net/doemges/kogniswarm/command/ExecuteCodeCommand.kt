@@ -8,7 +8,7 @@ class ExecuteCodeCommand : BaseCommand(
     description = "Executes the provided code snippet. Useful for dynamic code execution.",
     args = mapOf("code" to "File name to execute.")
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
 }

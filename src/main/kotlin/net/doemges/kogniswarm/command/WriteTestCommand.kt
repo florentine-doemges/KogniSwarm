@@ -8,7 +8,7 @@ class WriteTestCommand : BaseCommand(
     description = "Generates testable Kotlin code for the provided code. Useful for code testing automation.",
     args = mapOf("code" to "Code to test.")
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
 }

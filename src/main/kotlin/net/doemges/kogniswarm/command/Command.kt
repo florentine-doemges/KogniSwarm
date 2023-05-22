@@ -4,7 +4,7 @@ interface Command {
     val name: String
     val description: String
     val args: Map<String, String>
-    fun execute(commandInput: CommandInput): CommandOutput
+    suspend fun execute(commandInput: CommandInput): CommandOutput
 }
 
 open class CommandBuilder {
@@ -14,7 +14,7 @@ open class CommandBuilder {
         args[key] = value
     }
     inline fun <reified T: CommandOutputBuilder> output(noinline init: T.() -> Unit): T {
-        val command = T::class.java.newInstance()
+        val command = T::class.java.getDeclaredConstructor().newInstance()
         command.init()
         return command
     }

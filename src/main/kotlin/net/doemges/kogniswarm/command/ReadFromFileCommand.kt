@@ -8,7 +8,7 @@ class ReadFromFileCommand : BaseCommand(
     description = "Reads and returns the content of a specified file. Useful for data retrieval.",
     args = mapOf("filename" to "File to read.")
 ) {
-    override fun execute(args: Map<String, List<String>>): String {
-        return "Not implemented yet."
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
+        TODO("Not yet implemented")
     }
 }

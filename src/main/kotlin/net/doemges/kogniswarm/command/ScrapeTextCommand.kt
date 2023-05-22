@@ -8,7 +8,7 @@ class ScrapeTextCommand : BaseCommand(
     description = "Extracts and returns the text content of a website. Useful for web content extraction.",
     args = mapOf("url" to "Website URL.")
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
 }

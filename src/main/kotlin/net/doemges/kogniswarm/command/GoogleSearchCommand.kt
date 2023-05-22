@@ -1,9 +1,18 @@
 package net.doemges.kogniswarm.command
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import kotlinx.coroutines.reactor.awaitSingle
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 
 @Component
-class GoogleSearchCommand : BaseCommand(
+class GoogleSearchCommand(
+    private val webClientBuilder: WebClient.Builder,
+    @Value("\${google.search.custom.api.key}") val googleCustomSearchApiKey: String,
+    @Value("\${google.search.custom.engine.id}") val googleCustomSearchEngineId: String
+) : BaseCommand(
     name = "googleSearch",
     description = "Performs a Google search and returns results. Useful for web-based research.",
     args = mapOf("query" to "Search query.")
@@ -54,7 +63,45 @@ class GoogleSearchCommand : BaseCommand(
     }
 
 
-    override fun execute(commandInput: CommandInput): CommandOutput {
-        TODO("Not yet implemented")
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
+        val query = commandInput.args["query"] ?: error("Search query must be set")
+
+        val searchUrl = "https://www.googleapis.com/customsearch/v1"
+        val webClient = webClientBuilder.baseUrl(searchUrl)
+            .build()
+        return webClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .queryParam("key", googleCustomSearchApiKey)
+                    .queryParam("cx", googleCustomSearchEngineId)
+                    .queryParam("q", query)
+                    .build()
+            }
+            .retrieve()
+            .bodyToMono(Search::class.java)
+            .flatMap { search ->
+                val outputBuilder = OutputBuilder()
+                search.items?.forEach {
+                    outputBuilder.results {
+                        result {
+                            url(it.link)
+                            title(it.title)
+                        }
+                    }
+                }
+                Mono.just(outputBuilder.build(commandInput))
+            }
+            .awaitSingle()
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class Search(
+        val items: List<Item>?
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class Item(
+        val title: String,
+        val link: String
+    )
 }

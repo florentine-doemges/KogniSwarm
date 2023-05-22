@@ -11,7 +11,7 @@ class ImproveCodeCommand : BaseCommand(
         "suggestions" to "Improvement suggestions."
     )
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
 }

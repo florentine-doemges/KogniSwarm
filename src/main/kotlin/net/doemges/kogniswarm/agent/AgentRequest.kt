@@ -64,7 +64,7 @@ class AgentHistory {
 
     class Builder {
         inline fun <reified T: CommandBuilder> action(noinline init: T.() -> Unit): T {
-            val command = T::class.java.newInstance()
+            val command = T::class.java.getDeclaredConstructor().newInstance()
             command.init()
             return command
         }

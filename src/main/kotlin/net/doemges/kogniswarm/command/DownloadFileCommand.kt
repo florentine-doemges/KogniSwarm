@@ -8,7 +8,7 @@ class DownloadFileCommand : BaseCommand(
     description = "Downloads a file from a URL to a specified path. Useful for data acquisition.",
     args = mapOf("url" to "File URL.", "path" to "Target path.")
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
 }

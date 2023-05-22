@@ -8,7 +8,8 @@ class AnalyzeCodeCommand : BaseCommand(
     description = "Analyzes and suggests improvements for the provided code. Useful for code optimization.",
     args = mapOf("code" to "The code string for evaluation.")
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
+
 }

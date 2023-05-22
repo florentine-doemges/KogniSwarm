@@ -8,7 +8,7 @@ class SummarizeTextCommand : BaseCommand(
     description = "Creates a summary of the provided text. Useful for condensing lengthy text.",
     args = mapOf("text" to "Text to summarize.")
 ) {
-    override fun execute(args: Map<String, List<String>>): CommandOutput {
+    override suspend fun execute(commandInput: CommandInput): CommandOutput {
         TODO("Not yet implemented")
     }
 }

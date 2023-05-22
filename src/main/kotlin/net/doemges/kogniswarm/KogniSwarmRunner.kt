@@ -3,11 +3,11 @@ package net.doemges.kogniswarm
 import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.model.Model
-import net.doemges.kogniswarm.core.sendMessage
+import com.aallam.openai.api.image.internal.ImageResponseFormat.Companion.url
+import net.doemges.kogniswarm.agent.AgentRequest
+import net.doemges.kogniswarm.command.GoogleSearchCommand
 import net.doemges.kogniswarm.core.sendRequest
 import net.doemges.kogniswarm.openai.OpenAIChatCompletionRequest
-import net.doemges.kogniswarm.openai.OpenAIModelRequest
 import org.apache.camel.CamelContext
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class KogniSwarmRunner(
-    private val camelContext: CamelContext
+    private val camelContext: CamelContext,
+    private val googleSearchCommand: GoogleSearchCommand
 ) : ApplicationRunner {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -38,30 +39,11 @@ class KogniSwarmRunner(
 //            .joinToString()
 //        )
 
-        val openAIChatCompletionRequest = OpenAIChatCompletionRequest
+        val builder = OpenAIChatCompletionRequest
             .builder {
-                modelRequest {
-                    modelName("gpt")
-                    isGPT4allowed(false)
-                }
-                messages {
-                    prompt{
-                        template{
-                            message {
-                                content("Hello, tell me a joke about {topic}.")
-                                role(ChatRole.User)
-                            }
-                            message {
-                                content("Tell it from the perspective of a {species}")
-                                role(ChatRole.System)
-                            }
-                        }
-                        variable("topic", "Bushcraft")
-                        variable("species", "dog")
-                    }
-                }
+                chatCompletionConfig()
             }
-            .build()
+        val openAIChatCompletionRequest = builder.build()
 
         println(
             camelContext.sendRequest(
@@ -70,6 +52,56 @@ class KogniSwarmRunner(
                 ChatCompletion::class.java
             )
         )
+
+        val agentRequest: AgentRequest = AgentRequest
+            .builder {
+                request {
+                    chatCompletionConfig()
+                }
+                history {
+                    action<GoogleSearchCommand.Builder>{
+                        arg("query", "Bushcraft")
+                        output<GoogleSearchCommand.OutputBuilder> {
+                            results {
+                                result {
+                                    url("https://survival-kompass.de/was-ist-bushcraft/")
+                                    title("Was ist Bushcraft? Überlebensleitfaden für die Wildnis")
+                                }
+                                result {
+                                    url("https://bushcraftcamp.de/")
+                                    title("Bushcraftcamp - Outdoor Bushcraft Survival")
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            .build()
+    }
+
+    @OptIn(BetaOpenAI::class)
+    private fun OpenAIChatCompletionRequest.Builder.chatCompletionConfig() {
+        modelRequest {
+            modelName("gpt")
+            isGPT4allowed(false)
+        }
+        messages {
+            prompt {
+                template {
+                    message {
+                        content("Hello, tell me a joke about {topic}.")
+                        role(ChatRole.User)
+                    }
+                    message {
+                        content("Tell it from the perspective of a {species}")
+                        role(ChatRole.System)
+                    }
+                }
+                variable("topic", "Bushcraft")
+                variable("species", "dog")
+            }
+        }
     }
 
 

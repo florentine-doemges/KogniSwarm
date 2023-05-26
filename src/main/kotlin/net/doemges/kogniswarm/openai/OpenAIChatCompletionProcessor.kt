@@ -2,17 +2,14 @@ package net.doemges.kogniswarm.openai
 
 import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.client.OpenAI
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import net.doemges.kogniswarm.core.CoroutineAsyncProcessor
 import org.apache.camel.Exchange
 import org.springframework.stereotype.Component
 
 @Component
 class OpenAIChatCompletionProcessor(
-    private val openAI: OpenAI,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-) : CoroutineAsyncProcessor(scope) {
+    private val openAI: OpenAI
+) : CoroutineAsyncProcessor() {
     @OptIn(BetaOpenAI::class)
     override suspend fun processSuspend(exchange: Exchange) {
         exchange.message.body =

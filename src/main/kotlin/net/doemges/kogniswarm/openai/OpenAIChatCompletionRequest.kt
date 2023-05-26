@@ -22,6 +22,7 @@ class OpenAIChatCompletionRequest(
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+
     @OptIn(BetaOpenAI::class)
     suspend fun asChatCompletionRequest(openAI: OpenAI): ChatCompletionRequest {
         return ChatCompletionRequest(
@@ -40,7 +41,7 @@ class OpenAIChatCompletionRequest(
             frequencyPenalty = frequencyPenalty,
             logitBias = logitBias,
             user = user
-        ).also{
+        ).also {
             logger.info("Created ChatCompletionRequest: $it")
         }
     }
@@ -49,7 +50,7 @@ class OpenAIChatCompletionRequest(
         fun builder(block: Builder.() -> Unit) = Builder().apply(block)
     }
 
-    class Builder {
+    class Builder : Cloneable {
         private var model: ModelId? = null
         private var modelRequest: OpenAIModelRequest? = null
         private var messages: List<OpenAIChatMessage>? = null
@@ -104,5 +105,19 @@ class OpenAIChatCompletionRequest(
             user = user,
         )
 
+        override fun clone(): Any = Builder().also {
+            it.model = model
+            it.modelRequest = modelRequest
+            it.messages = messages
+            it.temperature = temperature
+            it.topP = topP
+            it.n = n
+            it.stop = stop
+            it.maxTokens = maxTokens
+            it.presencePenalty = presencePenalty
+            it.frequencyPenalty = frequencyPenalty
+            it.logitBias = logitBias
+            it.user = user
+        }
     }
 }

@@ -67,3 +67,4 @@ replay_pid*
 /src/main/resources/url-content-cache.json
 /src/main/resources/memory/
 /src/main/resources/agent_identifiers.json
+/src/main/resources/data/weaviate/

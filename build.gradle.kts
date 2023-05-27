@@ -1,11 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import java.nio.file.FileSystems
 
 plugins {
     id("org.springframework.boot") version "3.0.7"

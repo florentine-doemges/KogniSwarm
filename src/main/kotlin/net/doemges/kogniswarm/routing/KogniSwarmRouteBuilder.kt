@@ -1,5 +1,6 @@
 package net.doemges.kogniswarm.routing
 
+import net.doemges.kogniswarm.action.Action
 import net.doemges.kogniswarm.action.ActionHistoryProcessor
 import net.doemges.kogniswarm.action.ActionSummaryProcessor
 import net.doemges.kogniswarm.action.UpdateActionHistoryProcessor
@@ -13,8 +14,10 @@ import net.doemges.kogniswarm.think.EndOfActionDecisionProcessor
 import net.doemges.kogniswarm.tool.ToolSelectionProcessor
 import org.apache.camel.CamelContext
 import org.apache.camel.LoggingLevel
+import org.apache.camel.ResolveEndpointFailedException
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.log.LogComponent
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 
@@ -31,6 +34,8 @@ class KogniSwarmRouteBuilder(
     private val actionSummaryProcessor: ActionSummaryProcessor,
     private val camelContext: CamelContext
 ) : RouteBuilder() {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
     override fun configure() {
 
         camelContext.isMessageHistory = true
@@ -44,47 +49,60 @@ class KogniSwarmRouteBuilder(
 
         from("direct:prompt")
             .wireTap("log:prompt.incoming?level=DEBUG&showAll=true&multiline=true")
+            .process {
+                val message = it.getIn()
+                logger.info("incoming Prompt (round #${(message.headers["actionHistory"] as? List<*>)?.size ?: 0}): ${message.body}")
+            }
             .to("direct:preparation")
             .to("direct:processing")
             .to("direct:postprocessing")
+            .to("direct:continue")
             .wireTap("log:prompt.outgoing?level=DEBUG&showAll=true&multiline=true")
 
         from("direct:preparation")
-            .wireTap("log:preparation.incoming?level=DEBUG&showAll=true&multiline=true")
+            .wireTap("log:preparation.incoming?level=INFO&showAll=true&multiline=true")
             .multicast(CustomAggregationStrategy())
             .parallelProcessing()
             .to("direct:tools")
             .to("direct:actionHistory")
             .to("direct:context")
             .end()
-            .wireTap("log:preparation.outgoing?level=DEBUG&showAll=true&multiline=true")
+            .wireTap("log:preparation.outgoing?level=INFO&showAll=true&multiline=true")
 
         from("direct:processing")
+            .errorHandler(noErrorHandler())
             .wireTap("log:processing.incoming?level=DEBUG&showAll=true&multiline=true")
             .process(chainOfThoughtProcessor)
-            .wireTap("log:chainOfThoughtProcessor.outgoing?level=DEBUG&showAll=true&multiline=true")
+            .wireTap("log:recipientList.incoming?level=DEBUG&showAll=true&multiline=true")
             .recipientList(header("toolUri"))
-            .wireTap("log:tool.outgoing?level=DEBUG&showAll=true&multiline=true")
-            .process(actionSummaryProcessor)
             .wireTap("log:processing.outgoing?level=DEBUG&showAll=true&multiline=true")
 
         from("direct:postprocessing")
-            .wireTap("log:postprocessing.incoming?level=DEBUG&showAll=true&multiline=true")
+            .wireTap("log:postprocessing.incoming?level=INFO&showAll=true&multiline=true")
+            .to("direct:summarizeAction")
             .to("direct:updateActionHistory")
             .to("direct:updateContextHistory")
+            .wireTap("log:postprocessing.outgoing?level=INFO&showAll=true&multiline=true")
+
+        from("direct:continue")
+            .wireTap("log:continue.incoming?level=INFO&showAll=true&multiline=true")
             .process(endOfActionDecisionProcessor)
-            .wireTap("log:endOfActionDecisionProcessor.outgoing?level=DEBUG&showAll=true&multiline=true")
             .choice()
             .`when`(header("shouldContinue").isEqualTo(true))
             .to("direct:prompt")
             .otherwise()
             .to("direct:end")
-            .wireTap("log:postprocessing.outgoing?level=DEBUG&showAll=true&multiline=true")
+            .wireTap("log:continue.outgoing?level=INFO&showAll=true&multiline=true")
 
         from("direct:tools")
             .wireTap("log:tools.incoming?level=DEBUG&showAll=true&multiline=true")
             .process(toolSelectionProcessor)
             .wireTap("log:tools.outgoing?level=DEBUG&showAll=true&multiline=true")
+
+        from("direct:summarizeAction")
+            .wireTap("log:summarizeAction.incoming?level=DEBUG&showAll=true&multiline=true")
+            .process(actionSummaryProcessor)
+            .wireTap("log:summarizeAction.outgoing?level=DEBUG&showAll=true&multiline=true")
 
         from("direct:actionHistory")
             .wireTap("log:actionHistory.incoming?level=DEBUG&showAll=true&multiline=true")
@@ -112,7 +130,7 @@ class KogniSwarmRouteBuilder(
             .wireTap("log:openai-chatcompletion.outgoing?level=DEBUG&showAll=true&multiline=true")
 
         from("direct:end")
-            .wireTap("log:end.incoming?level=DEBUG&showAll=true&multiline=true")
+            .wireTap("log:end.incoming?level=INFO&showAll=true&multiline=true")
 
         context
             .getComponent("log", LogComponent::class.java)

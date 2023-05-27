@@ -9,16 +9,22 @@ import net.doemges.kogniswarm.openai.OpenAIChatCompletionRequest
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class ActionSummaryProcessor(private val objectMapper: ObjectMapper, private val camelContext: CamelContext) :
-    Processor {
+class ActionSummaryProcessor(
+    private val objectMapper: ObjectMapper,
+    private val camelContext: CamelContext
+) : Processor {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @OptIn(BetaOpenAI::class)
     override fun process(exchange: Exchange) {
         val message = exchange.getIn()
         (message.headers["action"] as? Action)?.let { action ->
+            logger.info(action.toString())
             val openAIChatCompletionRequest = OpenAIChatCompletionRequest
                 .builder {
                     modelRequest {
@@ -61,6 +67,8 @@ class ActionSummaryProcessor(private val objectMapper: ObjectMapper, private val
                 .requestBody("direct:openai-chatcompletion", openAIChatCompletionRequest)
 
             val responseText = (requestBody as ChatCompletion).choices.first().message?.content
+
+            logger.info(responseText)
 
             action.description = responseText
         }

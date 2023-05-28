@@ -23,7 +23,7 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
             .withProperties(createPropertiesMap(mission, action))
             .run()
         if (run.hasErrors()) {
-            val errorMessage = run.error.messages.joinToString("\n")
+            val errorMessage = run.error.messages.joinToString("\n") { it.message }
             logger.error(errorMessage)
             error(errorMessage)
         }

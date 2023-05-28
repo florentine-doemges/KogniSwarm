@@ -1,6 +1,5 @@
 package net.doemges.kogniswarm.action
 
-import net.doemges.kogniswarm.core.CoroutineAsyncProcessor
 import net.doemges.kogniswarm.core.Mission
 import org.apache.camel.Exchange
 import org.apache.camel.Processor

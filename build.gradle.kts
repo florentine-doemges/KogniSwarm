@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 
 plugins {
-    id("org.springframework.boot") version "3.0.6"
+    id("org.springframework.boot") version "3.0.7"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
@@ -15,39 +15,36 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         name = "m2-dv8tion"
         url = URI("https://m2.dv8tion.net/releases")
-    }}
+    }
+}
 
 extra["springShellVersion"] = "3.0.2"
 extra["testcontainersVersion"] = "1.17.6"
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
-    implementation("org.seleniumhq.selenium:selenium-java:4.8.3")
-    implementation("org.testcontainers:testcontainers:1.18.0")
-    implementation("org.testcontainers:selenium:1.18.0")
-    implementation("org.testcontainers:neo4j:1.18.0")
-    implementation("org.testcontainers:junit-jupiter:1.18.0")
+    implementation("org.springframework.boot:spring-boot-starter-webflux"){
+        exclude(group = "io.netty", module = "netty-resolver-dns-native-macos")
+    }
+    implementation("org.springframework.data:spring-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:1.7.22")
-    implementation("org.jetbrains.kotlin:kotlin-script-util:1.7.22")
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:1.7.22")
-    implementation("com.appmattus.fixture:fixture:1.2.0")
-    implementation("com.appmattus.fixture:fixture-javafaker:1.2.0")
-    implementation("org.jline:jline:3.23.0")
-    implementation("net.dv8tion:JDA:4.4.0_350")
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.apache.camel.springboot:camel-spring-boot-starter:4.0.0-M3")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.testcontainers:testcontainers:1.18.1")
+    implementation("io.weaviate:client:4.1.1")
+    implementation("com.aallam.openai:openai-client:3.2.3")
+    implementation("com.google.apis:google-api-services-customsearch:v1-rev20210918-1.32.1")
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.92.Final:osx-aarch_64")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-    testImplementation("org.jbehave:jbehave-core:5.1")
+    runtimeOnly("io.ktor:ktor-client-okhttp:2.3.0")
+
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.5")
     testImplementation("com.willowtreeapps.assertk:assertk:0.25")
@@ -74,4 +71,29 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.register("exportCode") {
+    val outputDir = File("${project.buildDir}/outputs")
+    val outputFile = File(outputDir, "project_code.txt")
+
+    val gitIgnoreFile = File(projectDir, ".gitignore")
+    val ignorePatterns = if (gitIgnoreFile.exists()) gitIgnoreFile.readLines() else listOf()
+
+    doLast {
+        outputDir.mkdirs()
+        outputFile.writeText("") // clear previous content
+
+        project.fileTree(projectDir)
+            .matching {
+                exclude(ignorePatterns)
+            }
+            .visit {
+                if (!isDirectory && name.endsWith(".kt")) {
+                    outputFile.appendText(file.readText() + "\n")
+                }
+            }
+
+        println("Code exported to ${outputFile.absolutePath}")
+    }
 }

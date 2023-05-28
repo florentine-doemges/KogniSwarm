@@ -3,15 +3,12 @@ package net.doemges.kogniswarm.config
 import io.weaviate.client.Config
 import io.weaviate.client.WeaviateClient
 import net.doemges.kogniswarm.docker.DockerService
-import jakarta.annotation.PostConstruct
 import net.doemges.kogniswarm.weaviate.BaseWeaviateClient
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.DependsOn
-import org.springframework.stereotype.Component
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 
@@ -51,23 +48,3 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
 
 }
 
-@Component
-class WeaviateConnectionChecker(private val client: TestableWeaviateClient) {
-
-    private val logger = LoggerFactory.getLogger(WeaviateConnectionChecker::class.java)
-
-    @PostConstruct
-    fun testConnection() {
-        try {
-            val status = client.misc()
-                .liveChecker()
-                .run()
-            if (!status.result) {
-                error("Unable to connect to Weaviate")
-            }
-            logger.info("Successfully connected to Weaviate")
-        } catch (exception: Exception) {
-            logger.error("Unable to connect to Weaviate", exception)
-        }
-    }
-}

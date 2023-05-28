@@ -2,13 +2,10 @@ package net.doemges.kogniswarm.docker
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.Locale
-import kotlin.streams.asSequence
 
 @Service
-class DockerService {
+class DockerService (private val commandExecutor: CommandExecutor) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -18,6 +15,7 @@ class DockerService {
         LINUX,
         UNKNOWN
     }
+
 
     init {
         when (getOperatingSystem()) {
@@ -53,19 +51,13 @@ class DockerService {
     }
 
 
+    @Suppress("SameParameterValue")
     private fun isDockerRunning(command: String): Boolean {
         return try {
-            val process = Runtime.getRuntime()
-                .exec(command)
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-
-            val last = reader.lines()
-                .asSequence()
-                .last()
-            val dockerRunning = !last
-                .contains("Cannot connect to the Docker daemon") && !last.contains("Error response from daemon:")
+            val output = commandExecutor.executeCommand(command)
+            val dockerRunning = !output.contains("Cannot connect to the Docker daemon") && !output.contains("Error response from daemon:")
             if (!dockerRunning) {
-                logger.error(last)
+                logger.error(output)
             }
             dockerRunning
         } catch (e: Exception) {
@@ -73,10 +65,10 @@ class DockerService {
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun startDocker(command: String) {
         try {
-            Runtime.getRuntime()
-                .exec(command)
+            commandExecutor.executeCommand(command)
             println("Docker has been started.")
         } catch (e: Exception) {
             println("Failed to start Docker.")

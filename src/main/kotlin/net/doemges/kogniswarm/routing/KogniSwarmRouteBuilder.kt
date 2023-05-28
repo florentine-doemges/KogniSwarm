@@ -46,7 +46,6 @@ class KogniSwarmRouteBuilder(
             .backOffMultiplier(2.0)
             .retryAttemptedLogLevel(LoggingLevel.WARN)
 
-
         from("direct:prompt")
             .wireTap("log:prompt.incoming?level=DEBUG&showAll=true&multiline=true")
             .process {

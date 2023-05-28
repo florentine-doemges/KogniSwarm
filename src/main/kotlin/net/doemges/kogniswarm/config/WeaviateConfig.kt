@@ -4,6 +4,8 @@ import io.weaviate.client.Config
 import io.weaviate.client.WeaviateClient
 import net.doemges.kogniswarm.docker.DockerService
 import jakarta.annotation.PostConstruct
+import net.doemges.kogniswarm.weaviate.BaseWeaviateClient
+import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -40,7 +42,7 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
     @Bean
     fun weaviateClient(
         weaviateClientConfig: Config
-    ): WeaviateClient = WeaviateClient(weaviateClientConfig)
+    ): TestableWeaviateClient = BaseWeaviateClient(WeaviateClient(weaviateClientConfig))
 
     @Bean
     fun weaviateClientConfig(weaviateContainer: GenericContainer<*>): Config =
@@ -50,7 +52,7 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
 }
 
 @Component
-class WeaviateConnectionChecker(private val client: WeaviateClient) {
+class WeaviateConnectionChecker(private val client: TestableWeaviateClient) {
 
     private val logger = LoggerFactory.getLogger(WeaviateConnectionChecker::class.java)
 

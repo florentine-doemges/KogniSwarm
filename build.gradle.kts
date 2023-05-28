@@ -46,9 +46,12 @@ dependencies {
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.testcontainers:elasticsearch")
-    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("com.willowtreeapps.assertk:assertk:0.25")
+    testImplementation("org.awaitility:awaitility:4.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("com.appmattus.fixture:fixture:1.2.0")
+    testImplementation("com.appmattus.fixture:fixture-javafaker:1.2.0")
 
 }
 

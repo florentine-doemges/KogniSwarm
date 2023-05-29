@@ -16,12 +16,18 @@ class OpenAIChatCompletionProcessor(
 
     @OptIn(BetaOpenAI::class)
     override suspend fun processSuspend(exchange: Exchange) {
-        val openAIChatCompletionRequest = exchange.getIn().body as OpenAIChatCompletionRequest
-        logger.info("Chat Completion Request: $openAIChatCompletionRequest")
-        val chatCompletion =
-            openAI.chatCompletion(openAIChatCompletionRequest.asChatCompletionRequest(openAI))
-        logger.info("Chat Completion: ${chatCompletion.choices[0].message?.content}")
-        exchange.message.body = chatCompletion
+        (exchange.getIn().body as OpenAIChatCompletionRequest)
+            .also { openAIChatCompletionRequest ->
+                logger.info("Chat Completion Request: $openAIChatCompletionRequest")
+                openAI
+                    .chatCompletion(openAIChatCompletionRequest.asChatCompletionRequest(openAI))
+                    .also { chatCompletion ->
+                        logger.info("Chat Completion: ${chatCompletion.choices[0].message?.content}")
+                        exchange.message.body = chatCompletion
+                    }
+
+            }
+
     }
 }
 

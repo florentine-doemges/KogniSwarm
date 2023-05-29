@@ -61,7 +61,11 @@ abstract class AbstractThinkingProcessor(
             .createProducerTemplate()
             .requestBody("direct:openai-chatcompletion", openAIChatCompletionRequest)
 
-        val responseText = (requestBody as ChatCompletion).choices.first().message?.content
+        val responseText = try {
+            (requestBody as ChatCompletion).choices.first().message?.content
+        } catch (e: NoSuchElementException) {
+            "No answer from OpenAI"
+        }
         processResponse(message, responseText)
     }
 

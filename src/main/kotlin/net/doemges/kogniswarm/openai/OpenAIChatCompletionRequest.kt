@@ -104,20 +104,5 @@ class OpenAIChatCompletionRequest(
             logitBias = logitBias,
             user = user,
         )
-
-        override fun clone(): Any = Builder().also {
-            it.model = model
-            it.modelRequest = modelRequest
-            it.messages = messages
-            it.temperature = temperature
-            it.topP = topP
-            it.n = n
-            it.stop = stop
-            it.maxTokens = maxTokens
-            it.presencePenalty = presencePenalty
-            it.frequencyPenalty = frequencyPenalty
-            it.logitBias = logitBias
-            it.user = user
-        }
     }
 }

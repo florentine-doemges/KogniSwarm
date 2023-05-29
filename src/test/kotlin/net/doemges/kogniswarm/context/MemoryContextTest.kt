@@ -60,7 +60,7 @@ class MemoryContextTest {
             memoryContext.get(createMission())
         }
 
-        assertThat(result).isEqualTo("- 'agentName' utilized the 'toolName' function that toolDescription based on the following parameters: arg1=value1, arg2=value2 to get the following result: result. This action was initiated in response to user's request: 'userPrompt'")
+        assertThat(result).isEqualTo("- You utilized the tool 'toolName' and got the result 'description'")
     }
 
     @Test

@@ -45,7 +45,7 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
 
     @Suppress("UNCHECKED_CAST")
     private fun createPropertiesMap(mission: Mission, action: Action): Map<String, Any> {
-        return mapOf(
+        val map = mapOf(
             "userName" to mission.user,
             "agentName" to mission.agentName,
             "userPrompt" to mission.userPrompt,
@@ -57,6 +57,10 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
             "result" to action.result,
             "description" to action.description
         ) as Map<String, Any>
+
+        logger.info("Creating: $map")
+
+        return map
     }
 
     private fun createNearTextQuery(mission: Mission): Get? {
@@ -71,6 +75,7 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
             )
             .withLimit(5)
             .withFields(
+                createField("description"),
                 createField("result"),
                 createField("userName"),
                 createField("agentName"),
@@ -86,9 +91,7 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
         .build()
 
     private fun formatMemory(memory: ArrayList<Map<String, String>>): String = memory.joinToString("\n") {
-        "- '${it["agentName"]}' utilized the '${it["toolName"]}' function that ${it["toolDescription"]} based on the following parameters: " +
-            "${it["args"]} to get the following result: ${it["result"]}. This action was initiated in response to ${it["userName"]}'s request: " +
-            "'${it["userPrompt"]}'"
+        "- You utilized the tool '${it["toolName"]}' and got the result '${it["description"]}'"
     }
 
 }

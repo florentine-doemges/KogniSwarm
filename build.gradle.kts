@@ -41,6 +41,10 @@ dependencies {
     implementation("com.google.apis:google-api-services-customsearch:v1-rev20210918-1.32.1")
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.92.Final:osx-aarch_64")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.jsoup:jsoup:1.16.1")
+    implementation("org.seleniumhq.selenium:selenium-java:4.9.1")
+    implementation("org.testcontainers:testcontainers:1.18.1")
+    implementation("org.testcontainers:selenium:1.18.1")
 
     runtimeOnly("io.ktor:ktor-client-okhttp:2.3.0")
 

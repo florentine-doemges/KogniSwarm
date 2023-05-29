@@ -1,14 +1,16 @@
-package net.doemges.kogniswarm.tool.tools.google
+package net.doemges.kogniswarm.tool.google
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.reactor.awaitSingle
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class GoogleSearchApiClient(
-    private val googleSearchConfig: GoogleSearchConfig,
+    @Value("\${google.search.custom.api.key}") private val googleCustomSearchApiKey: String,
+    @Value("\${google.search.custom.engine.id}") private val googleCustomSearchEngineId: String,
     private val webClientBuilder: WebClient.Builder
 ) {
 
@@ -22,8 +24,8 @@ class GoogleSearchApiClient(
         val result = webClient.get()
             .uri { uriBuilder ->
                 uriBuilder
-                    .queryParam("key", googleSearchConfig.googleCustomSearchApiKey)
-                    .queryParam("cx", googleSearchConfig.googleCustomSearchEngineId)
+                    .queryParam("key", googleCustomSearchApiKey)
+                    .queryParam("cx", googleCustomSearchEngineId)
                     .queryParam("q", query)
                     .queryParam("start", start + 1)
                     .queryParam("num", num)

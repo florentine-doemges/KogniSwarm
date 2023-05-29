@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.tool.tools.google
+package net.doemges.kogniswarm.tool.google
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.FlowPreview
@@ -9,17 +9,19 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.doemges.kogniswarm.action.Action
-import net.doemges.kogniswarm.tool.Tool
+import net.doemges.kogniswarm.tool.BaseTool
+import net.doemges.kogniswarm.tool.ParameterParser
 import org.apache.camel.Exchange
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
+
 @Component
 class GoogleSearchTool(
     private val googleSearchApiClient: GoogleSearchApiClient,
-    private val parameterParser: ParameterParser,
+    parameterParser: ParameterParser,
     private val objectMapper: ObjectMapper
-) : Tool {
+) : BaseTool(parameterParser) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GoogleSearchTool::class.java)
@@ -33,30 +35,24 @@ class GoogleSearchTool(
         "num" to "The number of search results to return per page. Default is 10"
     )
 
+
     @OptIn(FlowPreview::class)
-    override fun process(exchange: Exchange): Unit = runBlocking {
-        (exchange.getIn().headers["toolUri"] as? String)?.also { toolUri ->
-            (exchange.getIn().headers["toolParams"] as? String)?.let { toolParams ->
-                parameterParser.parseParameters(toolParams)
-                    .also { parsedParams ->
-                        val (query, start, num) = checkParams(parsedParams)
-
-                        logProcess(toolUri, toolParams, query, start, num)
-
-                        flow { tailrecFetchItems(start, num, query) }
-                            .flattenConcat()
-                            .toList()
-                            .also { allItems -> createAction(allItems, query, start, num, exchange) }
-                    }
-            }
-        }
-    }
-
-    private fun checkParams(parsedParams: Map<String, String>): Triple<String, Int, Int> {
+    override suspend fun processWithParams(
+        parsedParams: Map<String, String>,
+        toolUri: String,
+        toolParams: String,
+        exchange: Exchange
+    ) {
         val query = parsedParams["query"] ?: error("Query is not specified")
         val start = parsedParams["start"]?.toIntOrNull() ?: 0
         val num = parsedParams["num"]?.toIntOrNull() ?: 10
-        return Triple(query, start, num)
+
+        logProcess(toolUri, toolParams, query, start, num)
+
+        flow { tailrecFetchItems(start, num, query) }
+            .flattenConcat()
+            .toList()
+            .also { allItems -> createAction(allItems, query, start, num, exchange) }
     }
 
     private tailrec fun FlowCollector<Flow<List<Item>>>.tailrecFetchItems(

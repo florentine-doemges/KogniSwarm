@@ -16,7 +16,7 @@ class ToolSelectionProcessor(tools: List<Tool>) : Processor {
         exchange.getIn().headers["toolDescriptions"] =
             tools.joinToString("\n") {
                 "- ${it.name}: ${it.description} - args: [${
-                    it.args.keys.joinToString(", ") { arg -> "$arg: ${it.args[arg]}" }
+                    it.keys.joinToString(", ") { arg -> "$arg: ${it.args[arg]}" }
                 }]"
             }
 

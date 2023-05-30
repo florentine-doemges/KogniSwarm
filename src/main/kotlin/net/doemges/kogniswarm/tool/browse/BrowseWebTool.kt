@@ -7,7 +7,7 @@ import net.doemges.kogniswarm.extraction.Extract
 import net.doemges.kogniswarm.extraction.ExtractionContentType
 import net.doemges.kogniswarm.extraction.ExtractorService
 import net.doemges.kogniswarm.tool.BaseTool
-import net.doemges.kogniswarm.tool.ParameterParser
+import net.doemges.kogniswarm.core.ParameterParser
 import org.apache.camel.Exchange
 import org.springframework.stereotype.Component
 
@@ -48,5 +48,6 @@ class BrowseWebTool(
         "contentType" to "Type of content to retrieve (default: text). Possible values: text, images, links",
         "selenium" to "Whether to use Selenium for browsing (default: false). Possible values: true, false"
     )
+    override val keys: List<String> = listOf("url", "contentType", "selenium")
 
 }

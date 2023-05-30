@@ -50,7 +50,7 @@ class ContextProcessorTest {
         val headers = mutableMapOf<String, Any?>()
 
         every { message.body } returns mission
-        every { memoryContext.get(mission) } returns preContext
+        every { memoryContext.get(mission,) } returns preContext
         every { camelContext.createProducerTemplate() } returns producerTemplate
         every { producerTemplate.requestBody(any<String>(), any<Any>()) } returns chatCompletion
         every { chatCompletion.choices } returns listOf(chatChoice)

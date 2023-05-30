@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 @OptIn(ExperimentalCoroutinesApi::class)
 class ContainerPool(private val poolSize: Int) {
     private val pool = Channel<BrowserContainer>(poolSize)
+    private val containers = mutableListOf<BrowserContainer>()
     private val mutex = Mutex()
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -38,13 +39,19 @@ class ContainerPool(private val poolSize: Int) {
         println("Releasing WebDriver: id=${container.id}")
     }
 
-    private suspend fun closeAll() {
-        for (container in pool) {
+    suspend fun closeAll() {
+        for (container in containers) {
+            container.stop()
             container.close()
         }
         pool.close()
     }
 
-    private fun createContainer(): BrowserContainer = BrowserContainer.create()
+    private fun createContainer(): BrowserContainer = BrowserContainer
+        .create()
+        .also {
+            containers.add(it)
+            println("Created WebDriver: id=${it.id}")
+        }
 }
 

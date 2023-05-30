@@ -1,6 +1,7 @@
 package net.doemges.kogniswarm.tool.google
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Value
@@ -18,7 +19,7 @@ class GoogleSearchApiClient(
         private const val GOOGLE_API_URL = "https://www.googleapis.com/customsearch/v1"
     }
 
-    fun fetchItems(query: String, start: Int, num: Int): Flow<List<Item>> = flow {
+    fun fetchItems(query: String, start: Int, num: Int): Flow<Item> = channelFlow {
         val webClient = webClientBuilder.baseUrl(GOOGLE_API_URL)
             .build()
         val result = webClient.get()
@@ -35,6 +36,8 @@ class GoogleSearchApiClient(
             .bodyToMono(Search::class.java)
             .map { it.items ?: emptyList() }
             .awaitSingle()
-        emit(result)
+        result.forEach {
+            send(it)
+        }
     }
 }

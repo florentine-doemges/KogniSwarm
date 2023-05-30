@@ -45,6 +45,7 @@ dependencies {
     implementation("org.seleniumhq.selenium:selenium-java:4.9.1")
     implementation("org.testcontainers:testcontainers:1.18.1")
     implementation("org.testcontainers:selenium:1.18.1")
+    implementation("org.apache.tika:tika-core:2.8.0")
 
     runtimeOnly("io.ktor:ktor-client-okhttp:2.3.0")
 

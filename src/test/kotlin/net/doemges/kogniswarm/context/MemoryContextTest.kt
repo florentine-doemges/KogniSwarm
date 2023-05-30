@@ -78,21 +78,24 @@ class MemoryContextTest {
     private fun createMission(): Mission = Mission("user", "agentName", "userPrompt")
 
     private fun createAction(): Action {
-        return Action(object : Tool {
-            override val name: String = "test"
-            override val description: String = "test"
-            override val args: Map<String, String> = mapOf(
+        return Action(
+            object : Tool {
+                override val name: String = "test"
+                override val description: String = "test"
+                override val args: Map<String, String> = mapOf(
+                    "arg1" to "value1",
+                    "arg2" to "value2"
+                )
+                override val keys = listOf("arg1", "arg2")
+
+                override fun process(exchange: Exchange?) {
+                    TODO("Not yet implemented")
+                }
+            }, mapOf(
                 "arg1" to "value1",
                 "arg2" to "value2"
             )
-
-            override fun process(exchange: Exchange?) {
-                TODO("Not yet implemented")
-            }
-        }, mapOf(
-            "arg1" to "value1",
-            "arg2" to "value2"
-        ))
+        )
     }
 
     // A helper method that can be used to run assertions and reduce duplicate code

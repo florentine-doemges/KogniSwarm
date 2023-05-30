@@ -2,15 +2,15 @@ package net.doemges.kogniswarm.tool.google
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flattenConcat
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.runBlocking
 import net.doemges.kogniswarm.action.Action
 import net.doemges.kogniswarm.tool.BaseTool
-import net.doemges.kogniswarm.tool.ParameterParser
+import net.doemges.kogniswarm.core.ParameterParser
 import org.apache.camel.Exchange
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -34,6 +34,7 @@ class GoogleSearchTool(
         "start" to "The starting index for search results. Default is 0",
         "num" to "The number of search results to return per page. Default is 10"
     )
+    override val keys: List<String> = listOf("query", "start", "num")
 
 
     @OptIn(FlowPreview::class)
@@ -43,19 +44,19 @@ class GoogleSearchTool(
         toolParams: String,
         exchange: Exchange
     ) {
+        logger.info("Processing $toolUri with params $toolParams -> $parsedParams")
         val query = parsedParams["query"] ?: error("Query is not specified")
         val start = parsedParams["start"]?.toIntOrNull() ?: 0
         val num = parsedParams["num"]?.toIntOrNull() ?: 10
 
         logProcess(toolUri, toolParams, query, start, num)
 
-        flow { tailrecFetchItems(start, num, query) }
-            .flattenConcat()
-            .toList()
+        channelFlow { tailrecFetchItems(start, num, query) }
+            .toCollection(mutableListOf())
             .also { allItems -> createAction(allItems, query, start, num, exchange) }
     }
 
-    private tailrec fun FlowCollector<Flow<List<Item>>>.tailrecFetchItems(
+    private tailrec fun ProducerScope<Item>.tailrecFetchItems(
         start: Int,
         num: Int,
         query: String
@@ -63,14 +64,19 @@ class GoogleSearchTool(
         if (num <= 0) return
 
         val currentNum = minOf(num, 10)
-        runBlocking { emit(googleSearchApiClient.fetchItems(query, start, currentNum)) }
+        val items = googleSearchApiClient.fetchItems(query, start, currentNum)
+
+        runBlocking {
+            items.onEach { send(it) }
+                .collect()
+        }
 
         tailrecFetchItems(start + currentNum, num - currentNum, query)
     }
 
 
     private fun createAction(
-        allItems: List<List<Item>>,
+        allItems: List<Item>,
         query: String,
         start: Int,
         num: Int,

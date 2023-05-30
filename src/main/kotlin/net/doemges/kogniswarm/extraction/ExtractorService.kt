@@ -17,23 +17,17 @@ class ExtractorService(
         return extractSimple(url, contentType)
     }
 
-    private fun createContentExtractor(contentType: ExtractionContentType): ContentExtractor = when (contentType) {
-        ExtractionContentType.TEXT -> TextContentExtractor()
-        ExtractionContentType.IMAGES -> ImageContentExtractor()
-        ExtractionContentType.LINKS -> LinkContentExtractor()
-    }
-
     private fun extractSimple(
         url: String,
         contentType: ExtractionContentType = ExtractionContentType.TEXT
     ): Flow<Extract> = SimpleExtractor(
         webClientBuilder.baseUrl(url)
             .build()
-    ).extract(url, createContentExtractor(contentType))
+    ).extract(url, ContentExtractor(contentType))
 
     private fun extractWithSelenium(url: String, contentType: ExtractionContentType): Flow<Extract> =
         SeleniumExtractor(
             browserService.getWebDriver()
-        ).extract(url, createContentExtractor(contentType))
+        ).extract(url, ContentExtractor(contentType))
 }
 

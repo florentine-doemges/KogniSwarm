@@ -7,11 +7,12 @@ import net.doemges.kogniswarm.action.Action
 import net.doemges.kogniswarm.core.Mission
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
+class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -30,8 +31,8 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun get(mission: Mission): String {
-        val withNearText = createNearTextQuery(mission)
+    fun get(mission: Mission, limit: Int = 10): String {
+        val withNearText = createNearTextQuery(mission, limit)
 
         val graphQLResponseResult = withNearText?.run()
         val graphQLResponse = graphQLResponseResult?.result
@@ -63,7 +64,7 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
         return map
     }
 
-    private fun createNearTextQuery(mission: Mission): Get? {
+    private fun createNearTextQuery(mission: Mission, limit: Int = 10): Get? {
         return weaviateClient
             .graphQL()
             .get()
@@ -73,7 +74,7 @@ class MemoryContext(private val weaviateClient: TestableWeaviateClient) {
                     .concepts(arrayOf(mission.userPrompt))
                     .build()
             )
-            .withLimit(5)
+            .withLimit(limit)
             .withFields(
                 createField("description"),
                 createField("result"),

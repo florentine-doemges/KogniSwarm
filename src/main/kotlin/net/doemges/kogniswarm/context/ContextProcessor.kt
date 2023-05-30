@@ -22,7 +22,7 @@ class ContextProcessor(
     @OptIn(BetaOpenAI::class)
     override fun process(exchange: Exchange) {
         val mission = exchange.getIn().body as Mission
-        val context = memoryContext.get(mission)
+        val context = memoryContext.get(mission, 10)
 
         logger.info("Pre Context: $context")
 

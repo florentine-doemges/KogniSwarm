@@ -38,7 +38,6 @@ dependencies {
     implementation("org.testcontainers:testcontainers:1.18.1")
     implementation("io.weaviate:client:4.1.1")
     implementation("com.aallam.openai:openai-client:3.2.3")
-    implementation("com.google.apis:google-api-services-customsearch:v1-rev20210918-1.32.1")
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.92.Final:osx-aarch_64")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jsoup:jsoup:1.16.1")
@@ -46,6 +45,7 @@ dependencies {
     implementation("org.testcontainers:testcontainers:1.18.1")
     implementation("org.testcontainers:selenium:1.18.1")
     implementation("org.apache.tika:tika-core:2.8.0")
+    implementation("com.google.apis:google-api-services-customsearch:v1-rev86-1.25.0")
 
     runtimeOnly("io.ktor:ktor-client-okhttp:2.3.0")
 

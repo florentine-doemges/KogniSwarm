@@ -9,7 +9,9 @@ import net.doemges.kogniswarm.extraction.ExtractionContentType
 import net.doemges.kogniswarm.extraction.ExtractorService
 import net.doemges.kogniswarm.tool.BaseTool
 import org.apache.camel.Exchange
+import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 @Component
 class BrowseWebTool(
@@ -27,7 +29,14 @@ class BrowseWebTool(
         val contentType = ExtractionContentType.ofString(parsedParams["contentType"] ?: "text")!!
         val selenium = parsedParams["selenium"]?.toBoolean() ?: false
 
-        val extracts: List<Extract> = extractorService.extract(url, contentType, selenium).toCollection(mutableListOf())
+        val extracts: List<Extract> = try {
+            extractorService.extract(url, contentType, selenium).toCollection(mutableListOf())
+        } catch (e: WebClientResponseException) {
+            when{
+                e.statusCode.is4xxClientError -> emptyList()
+                else -> throw e
+            }
+        }
 
         val action = Action(
             tool = this,

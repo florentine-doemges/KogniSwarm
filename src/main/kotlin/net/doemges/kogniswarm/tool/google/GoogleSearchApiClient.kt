@@ -1,40 +1,35 @@
 package net.doemges.kogniswarm.tool.google
 
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.services.customsearch.v1.Customsearch
+import com.google.api.services.customsearch.v1.CustomsearchRequestInitializer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class GoogleSearchApiClient(
     @Value("\${google.search.custom.api.key}") private val googleCustomSearchApiKey: String,
-    @Value("\${google.search.custom.engine.id}") private val googleCustomSearchEngineId: String,
-    private val webClient: WebClient
+    @Value("\${google.search.custom.engine.id}") private val googleCustomSearchEngineId: String
 ) {
 
-    companion object {
-        private const val GOOGLE_API_URL = "https://www.googleapis.com/customsearch/v1"
+    private val cs: Customsearch by lazy {
+        Customsearch.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), null)
+            .setApplicationName("MyApplication")
+            .setGoogleClientRequestInitializer(CustomsearchRequestInitializer(googleCustomSearchApiKey))
+            .build()
     }
 
     fun fetchItems(query: String, start: Int, num: Int): Flow<Item> = channelFlow {
-        val result = webClient.get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .queryParam("key", googleCustomSearchApiKey)
-                    .queryParam("cx", googleCustomSearchEngineId)
-                    .queryParam("q", query)
-                    .queryParam("start", start + 1)
-                    .queryParam("num", num)
-                    .build()
-            }
-            .retrieve()
-            .bodyToMono(Search::class.java)
-            .map { it.items ?: emptyList() }
-            .awaitSingle()
-        result.forEach {
-            send(it)
-        }
+        val list = cs.cse()
+            .list()
+            .setCx(googleCustomSearchEngineId)
+            .setStart(start.toLong())
+            .setNum(num)
+            .setQ(query)
+        val result = list.execute()
+        result.items?.forEach { send(Item(it.title, it.link)) }
     }
 }

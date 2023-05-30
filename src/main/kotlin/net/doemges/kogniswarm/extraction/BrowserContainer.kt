@@ -4,7 +4,7 @@ import org.openqa.selenium.chrome.ChromeOptions
 import org.testcontainers.containers.BrowserWebDriverContainer
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 
 class BrowserContainer private constructor(image: DockerImageName) : BrowserWebDriverContainer<BrowserContainer>(image) {
     val id: UUID = UUID.randomUUID()

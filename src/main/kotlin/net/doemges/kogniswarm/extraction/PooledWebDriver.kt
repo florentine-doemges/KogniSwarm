@@ -9,7 +9,10 @@ class PooledWebDriver(
     private val returnFunction: suspend (BrowserContainer) -> Unit,
     private val getContainer: suspend () -> BrowserContainer,
 ) : AutoCloseable, WebDriver {
-    private val webDriver: WebDriver by lazy { container.webDriver }
+    private val webDriver: WebDriver by lazy {
+        @Suppress("DEPRECATION")
+        container.webDriver
+    }
 
     private val container: BrowserContainer by lazy {
         runBlocking {

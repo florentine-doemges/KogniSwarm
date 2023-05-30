@@ -1,6 +1,5 @@
 package net.doemges.kogniswarm.tool
 
-import jakarta.annotation.PostConstruct
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
 import org.slf4j.LoggerFactory

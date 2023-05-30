@@ -9,6 +9,8 @@ class ChatCompletionRouteBuilder(private val openAIChatCompletionProcessor: Open
     RouteBuilder() {
     override fun configure() {
         from("direct:openai-chatcompletion")
+            .throttle(1)
+            .timePeriodMillis(1_000)
             .wireTap("log:openai-chatcompletion.incoming?level=DEBUG&showAll=true&multiline=true")
             .process(openAIChatCompletionProcessor)
             .wireTap("log:openai-chatcompletion.outgoing?level=DEBUG&showAll=true&multiline=true")

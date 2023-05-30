@@ -1,3 +1,5 @@
+package net.doemges.kogniswarm.context
+
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isSuccess
@@ -14,8 +16,9 @@ import io.weaviate.client.v1.graphql.model.GraphQLResponse
 import io.weaviate.client.v1.graphql.query.Get
 import io.weaviate.client.v1.misc.Misc
 import net.doemges.kogniswarm.action.Action
-import net.doemges.kogniswarm.context.MemoryContext
 import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.token.Tokenizer
+import net.doemges.kogniswarm.token.TokenizerService
 import net.doemges.kogniswarm.tool.Tool
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
 import org.apache.camel.Exchange
@@ -45,7 +48,12 @@ class MemoryContextTest {
             }
 
         )
-        memoryContext = MemoryContext(testClient)
+        val tokenizerService = mockk<TokenizerService>().apply {
+            every { tokenizer } returns mockk<Tokenizer>().apply {
+                every { tokenize(any()) } returns listOf("action")
+            }
+        }
+        memoryContext = MemoryContext(testClient, tokenizerService)
     }
 
     @Test
@@ -66,7 +74,7 @@ class MemoryContextTest {
     @Test
     fun testPutThrowsError() {
         val testClient = createTestableWeaviateClient(hasErrors = true, memoryResults = ArrayList())
-        memoryContext = MemoryContext(testClient)
+        memoryContext = MemoryContext(testClient, mockk())
         val action = createAction()
 
         assertThrows(RuntimeException::class.java) {

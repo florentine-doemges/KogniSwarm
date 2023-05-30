@@ -5,6 +5,8 @@ import io.weaviate.client.v1.graphql.query.argument.NearTextArgument
 import io.weaviate.client.v1.graphql.query.fields.Field
 import net.doemges.kogniswarm.action.Action
 import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.token.TokenizerService
+import net.doemges.kogniswarm.token.limitTokens
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
@@ -12,7 +14,10 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
+class MemoryContext(
+    @Lazy private val weaviateClient: TestableWeaviateClient,
+    private val tokenizerService: TokenizerService
+) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -31,7 +36,7 @@ class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun get(mission: Mission, limit: Int = 10): String {
+    fun get(mission: Mission, limit: Int = 10, maxToken: Int = 4000): String {
         val withNearText = createNearTextQuery(mission, limit)
 
         val graphQLResponseResult = withNearText?.run()
@@ -39,9 +44,15 @@ class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
 
         val data: Map<String, Any?> = graphQLResponse?.data as Map<String, Any?>
         val get: Map<String, Any?> = data["Get"] as Map<String, Any?>
-        val memory: ArrayList<Map<String, String>> = get["Memory"] as ArrayList<Map<String, String>>
+        val memory: List<Map<String, String>> =
+            (get["Memory"] as ArrayList<Map<String, String>>)
+                .sortedBy { -(it["timestamp"]?.toLong() ?: 0) }
+                .limitTokens(maxToken, tokenizerService.tokenizer) {
+                    formatMemories(it)
+                }
+                .reversed()
 
-        return formatMemory(memory)
+        return formatMemories(memory)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -56,7 +67,8 @@ class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
                 "$it=${action.args[it]}"
             },
             "result" to action.result,
-            "description" to action.description
+            "description" to action.description,
+            "timestamp" to action.timestamp
         ) as Map<String, Any>
 
         logger.info("Creating: $map")
@@ -83,7 +95,8 @@ class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
                 createField("userPrompt"),
                 createField("toolName"),
                 createField("toolDescription"),
-                createField("args")
+                createField("args"),
+                createField("timestamp")
             )
     }
 
@@ -91,8 +104,10 @@ class MemoryContext(@Lazy private val weaviateClient: TestableWeaviateClient) {
         .name(fieldName)
         .build()
 
-    private fun formatMemory(memory: ArrayList<Map<String, String>>): String = memory.joinToString("\n") {
-        "- You utilized the tool '${it["toolName"]}' and got the result '${it["description"]}'"
-    }
+    private fun formatMemories(memories: List<Map<String, String>>): String = memories
+        .joinToString("\n") { formatMemory(it) }
+
+    private fun formatMemory(memory: Map<String, String>) =
+        "- You utilized the tool '${memory["toolName"]}' and got the result '${memory["description"]}'"
 
 }

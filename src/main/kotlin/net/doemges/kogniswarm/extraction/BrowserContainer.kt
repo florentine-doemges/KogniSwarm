@@ -1,4 +1,4 @@
-package net.doemges.kogniswarm.containers
+package net.doemges.kogniswarm.extraction
 
 import org.openqa.selenium.chrome.ChromeOptions
 import org.testcontainers.containers.BrowserWebDriverContainer

@@ -7,7 +7,8 @@ import java.io.InputStreamReader
 @Component
 class DefaultCommandExecutor : CommandExecutor {
     override fun executeCommand(command: String): String {
-        val process = Runtime.getRuntime().exec(command)
+        @Suppress("DEPRECATION") val process = Runtime.getRuntime()
+            .exec(command)
         val reader = BufferedReader(InputStreamReader(process.inputStream))
         return reader.readText()
     }

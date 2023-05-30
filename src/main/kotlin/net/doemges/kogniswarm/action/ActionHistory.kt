@@ -19,6 +19,7 @@ class ActionHistory {
 
     fun get(mission: Mission): List<Action>? = history
         .getOrPut(mission) { mutableListOf() }
+        .sortedBy { it.timestamp }
         .also {
             logger.info("History Size: ${it.size}")
         }

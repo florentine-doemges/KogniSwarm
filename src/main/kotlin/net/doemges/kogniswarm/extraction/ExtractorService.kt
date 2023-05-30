@@ -1,7 +1,6 @@
 package net.doemges.kogniswarm.extraction
 
 import kotlinx.coroutines.flow.Flow
-import net.doemges.kogniswarm.containers.BrowserService
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 

@@ -1,16 +1,16 @@
 package net.doemges.kogniswarm.action
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNotNull
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import net.doemges.kogniswarm.core.Mission
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import net.doemges.kogniswarm.core.Mission
 
 class UpdateActionHistoryProcessorTest {
 

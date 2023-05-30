@@ -1,7 +1,8 @@
-package net.doemges.kogniswarm.containers
+package net.doemges.kogniswarm.extraction
 
 import jakarta.annotation.PreDestroy
 import kotlinx.coroutines.runBlocking
+import net.doemges.kogniswarm.containers.ContainerPool
 import org.springframework.stereotype.Service
 
 @Service

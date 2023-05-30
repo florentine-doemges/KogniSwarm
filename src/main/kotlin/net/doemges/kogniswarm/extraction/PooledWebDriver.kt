@@ -1,14 +1,15 @@
-package net.doemges.kogniswarm.containers
+package net.doemges.kogniswarm.extraction
 
 import kotlinx.coroutines.runBlocking
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 
 class PooledWebDriver(
     private val returnFunction: suspend (BrowserContainer) -> Unit,
     private val getContainer: suspend () -> BrowserContainer,
-) : AutoCloseable, WebDriver {
+) : AutoCloseable, WebDriver, JavascriptExecutor {
     private val webDriver: WebDriver by lazy {
         @Suppress("DEPRECATION")
         container.webDriver
@@ -50,6 +51,11 @@ class PooledWebDriver(
     override fun navigate(): WebDriver.Navigation = webDriver.navigate()
 
     override fun manage(): WebDriver.Options = webDriver.manage()
+    override fun executeScript(script: String?, vararg args: Any?): Any =
+        (webDriver as JavascriptExecutor).executeScript(script, *args)
+
+    override fun executeAsyncScript(script: String?, vararg args: Any?): Any =
+        (webDriver as JavascriptExecutor).executeAsyncScript(script, *args)
 
 
 }

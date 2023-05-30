@@ -4,7 +4,6 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import assertk.assertions.isNull
 import assertk.assertions.isNullOrEmpty
 import assertk.assertions.isSuccess
 import io.mockk.mockk

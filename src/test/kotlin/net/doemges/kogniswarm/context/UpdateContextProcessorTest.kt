@@ -1,7 +1,5 @@
 package net.doemges.kogniswarm.context
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just

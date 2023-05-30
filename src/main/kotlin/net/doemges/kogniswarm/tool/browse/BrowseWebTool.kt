@@ -3,11 +3,11 @@ package net.doemges.kogniswarm.tool.browse
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.toCollection
 import net.doemges.kogniswarm.action.Action
+import net.doemges.kogniswarm.core.ParameterParser
 import net.doemges.kogniswarm.extraction.Extract
 import net.doemges.kogniswarm.extraction.ExtractionContentType
 import net.doemges.kogniswarm.extraction.ExtractorService
 import net.doemges.kogniswarm.tool.BaseTool
-import net.doemges.kogniswarm.core.ParameterParser
 import org.apache.camel.Exchange
 import org.springframework.stereotype.Component
 

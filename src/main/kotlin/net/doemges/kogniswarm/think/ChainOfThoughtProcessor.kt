@@ -24,7 +24,7 @@ class ChainOfThoughtProcessor(camelContext: CamelContext, objectMapper: ObjectMa
         |Please respond in the format '<action_name> <parameters>'.""".trimMargin()
 
     override fun processResponse(message: Message, responseText: String?) {
-        val strippedAndTrimmed = responseText?.removeSurrounding("'", )?.trim()
+        val strippedAndTrimmed = responseText?.removeSurrounding("'")?.trim()
         logger.info("responseText: $strippedAndTrimmed")
         val actionName = strippedAndTrimmed?.substringBefore(" ")
         val actionParameters = strippedAndTrimmed?.substringAfter(" ")
@@ -32,7 +32,7 @@ class ChainOfThoughtProcessor(camelContext: CamelContext, objectMapper: ObjectMa
         logger.info("actionParameters: $actionParameters")
 
         val name = tools.find {
-            actionName?.contains(it.name ?: "", ignoreCase = true) ?: false
+            actionName?.contains(it.name, ignoreCase = true) ?: false
         }?.name ?: error("Could not find any tool matching '$actionName'")
 
         logger.info("name: $name")

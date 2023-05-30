@@ -1,16 +1,14 @@
 package net.doemges.kogniswarm.openai
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.aallam.openai.api.model.Model
-import com.aallam.openai.api.model.ModelPermission
 import com.aallam.openai.api.model.ModelId
+import com.aallam.openai.api.model.ModelPermission
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
-import assertk.assertions.isFalse
 
 class OpenAIModelRequestTest {
 

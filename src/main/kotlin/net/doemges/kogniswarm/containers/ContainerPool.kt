@@ -5,10 +5,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import net.doemges.kogniswarm.extraction.BrowserContainer
+import net.doemges.kogniswarm.extraction.PooledWebDriver
 import org.slf4j.LoggerFactory
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ContainerPool(private val poolSize: Int) {
+class ContainerPool(poolSize: Int) {
     private val pool = Channel<BrowserContainer>(poolSize)
     private val containers = mutableListOf<BrowserContainer>()
     private val mutex = Mutex()
@@ -16,6 +18,7 @@ class ContainerPool(private val poolSize: Int) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     init {
+        logger.info("Initializing ContainerPool with size $poolSize")
         Runtime.getRuntime()
             .addShutdownHook(Thread {
                 runBlocking {
@@ -36,10 +39,10 @@ class ContainerPool(private val poolSize: Int) {
 
     private suspend fun returnContainer(container: BrowserContainer) {
         pool.send(container)
-        println("Releasing WebDriver: id=${container.id}")
+        logger.info("Releasing WebDriver: id=${container.id}")
     }
 
-    suspend fun closeAll() {
+    fun closeAll() {
         for (container in containers) {
             container.stop()
             container.close()
@@ -51,7 +54,7 @@ class ContainerPool(private val poolSize: Int) {
         .create()
         .also {
             containers.add(it)
-            println("Created WebDriver: id=${it.id}")
+            logger.info("Created WebDriver: id=${it.id}")
         }
 }
 

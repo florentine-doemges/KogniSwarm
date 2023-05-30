@@ -12,7 +12,6 @@ import com.aallam.openai.api.chat.ChatMessage
 import io.mockk.every
 import io.mockk.mockk
 import net.doemges.kogniswarm.core.Mission
-import net.doemges.kogniswarm.tool.Tool
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
 import org.apache.camel.Message

@@ -2,7 +2,6 @@ package net.doemges.kogniswarm
 
 import net.doemges.kogniswarm.core.Mission
 import org.apache.camel.CamelContext
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner

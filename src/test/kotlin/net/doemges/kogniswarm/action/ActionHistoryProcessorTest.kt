@@ -1,14 +1,17 @@
 package net.doemges.kogniswarm.action
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.token.Tokenizer
+import net.doemges.kogniswarm.token.TokenizerService
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import net.doemges.kogniswarm.core.Mission
 
 class ActionHistoryProcessorTest {
 
@@ -25,7 +28,15 @@ class ActionHistoryProcessorTest {
 
         every { exchange.getIn() } returns inMessage
 
-        processor = ActionHistoryProcessor(actionHistory)
+        val tokenizerService = mockk<TokenizerService>().apply {
+            every { tokenizer } returns mockk<Tokenizer>().apply {
+                every { tokenize(any()) } returns listOf("action")
+            }
+        }
+        val objectMapper = mockk<ObjectMapper>().apply {
+            every { writeValueAsString(any()) } returns "action"
+        }
+        processor = ActionHistoryProcessor(actionHistory, objectMapper, tokenizerService)
     }
 
     @Test

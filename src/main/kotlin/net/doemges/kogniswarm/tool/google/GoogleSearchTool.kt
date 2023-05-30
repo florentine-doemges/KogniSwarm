@@ -1,7 +1,6 @@
 package net.doemges.kogniswarm.tool.google
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
@@ -9,8 +8,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.runBlocking
 import net.doemges.kogniswarm.action.Action
-import net.doemges.kogniswarm.tool.BaseTool
 import net.doemges.kogniswarm.core.ParameterParser
+import net.doemges.kogniswarm.tool.BaseTool
 import org.apache.camel.Exchange
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -37,7 +36,6 @@ class GoogleSearchTool(
     override val keys: List<String> = listOf("query", "start", "num")
 
 
-    @OptIn(FlowPreview::class)
     override suspend fun processWithParams(
         parsedParams: Map<String, String>,
         toolUri: String,

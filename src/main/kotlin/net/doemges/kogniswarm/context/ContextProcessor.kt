@@ -22,7 +22,10 @@ class ContextProcessor(
     @OptIn(BetaOpenAI::class)
     override fun process(exchange: Exchange) {
         val mission = exchange.getIn().body as Mission
-        val context = memoryContext.get(mission, 10)
+        val context: String = memoryContext.get(
+            mission = mission,
+            limit = 10
+        )
 
         logger.info("Pre Context: $context")
 
@@ -38,10 +41,11 @@ class ContextProcessor(
                         role(ChatRole.User)
                     }
                     message {
-                        content("Write a summary.")
+                        content("Write a detailed summary.")
                         role(ChatRole.System)
                     }
                 }
+                maxTokens(1000)
             }
             .build()
 

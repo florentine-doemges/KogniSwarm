@@ -20,10 +20,14 @@ class DockerService (private val commandExecutor: CommandExecutor) {
 
 
     init {
-        when (getOperatingSystem()) {
+        logger.info("initializing DockerService...")
+        val operatingSystem = getOperatingSystem()
+        logger.info("Operating System: $operatingSystem")
+        when (operatingSystem) {
             OperatingSystem.MAC -> handleDockerOnMac()
-            else -> println("Unsupported operating system")
+            else -> logger.info("Unsupported operating system")
         }
+        logger.info("DockerService initialized.")
     }
 
     private fun getOperatingSystem(): OperatingSystem {
@@ -39,6 +43,7 @@ class DockerService (private val commandExecutor: CommandExecutor) {
 
     private fun handleDockerOnMac() {
         if (!isDockerRunning("docker info")) {
+            logger.info("Docker is not running. Starting Docker...")
             startDocker("open --background -a Docker")
         }
 
@@ -50,6 +55,8 @@ class DockerService (private val commandExecutor: CommandExecutor) {
                 e.printStackTrace()
             }
         }
+        logger.info("Docker has been started.")
+
     }
 
 
@@ -57,6 +64,7 @@ class DockerService (private val commandExecutor: CommandExecutor) {
     private fun isDockerRunning(command: String): Boolean {
         return try {
             val output = commandExecutor.executeCommand(command)
+            logger.debug(output)
             val dockerRunning = !output.contains("Cannot connect to the Docker daemon") && !output.contains("Error response from daemon:")
             if (!dockerRunning) {
                 logger.error(output)
@@ -71,9 +79,9 @@ class DockerService (private val commandExecutor: CommandExecutor) {
     private fun startDocker(command: String) {
         try {
             commandExecutor.executeCommand(command)
-            println("Docker has been started.")
+            logger.info("Docker has been started.")
         } catch (e: Exception) {
-            println("Failed to start Docker.")
+            logger.error("Failed to start Docker: ${e.message}")
         }
     }
 }

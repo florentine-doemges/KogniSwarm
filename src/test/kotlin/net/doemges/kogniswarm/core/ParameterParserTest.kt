@@ -64,6 +64,20 @@ class ParameterParserTest {
         )
     }
 
+    //
+
+    @Test
+    fun testParseParameter7() {
+        parseAndCheckResult(
+            paramString = "url: 'https://en.wikipedia.org/wiki/Digital_Marxism', contentType: 'text', selenium: false.",
+            args = mapOf(
+                "url" to "https://en.wikipedia.org/wiki/Digital_Marxism",
+                "contentType" to "text",
+                "selenium" to "false"
+            )
+        )
+    }
+
     private fun parseAndCheckResult(
         paramString: String,
         args: Map<String, String>

@@ -5,12 +5,14 @@ import io.weaviate.client.v1.graphql.query.argument.NearTextArgument
 import io.weaviate.client.v1.graphql.query.fields.Field
 import net.doemges.kogniswarm.action.Action
 import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.token.Tokenizer
 import net.doemges.kogniswarm.token.TokenizerService
 import net.doemges.kogniswarm.token.limitTokens
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
 import java.util.UUID
 
 @Component
@@ -44,13 +46,18 @@ class MemoryContext(
 
         val data: Map<String, Any?> = graphQLResponse?.data as Map<String, Any?>
         val get: Map<String, Any?> = data["Get"] as Map<String, Any?>
-        val memory: List<Map<String, String>> =
-            (get["Memory"] as ArrayList<Map<String, String>>)
-                .sortedBy { -(it["timestamp"]?.toLong() ?: 0) }
-                .limitTokens(maxToken, tokenizerService.tokenizer) {
-                    formatMemories(it)
-                }
-                .reversed()
+        val memoryMap = get["Memory"] as ArrayList<Map<String, String>>
+        val memory: List<Map<String, String>> = memoryMap
+            .sortedBy {
+                val timestampString = it["timestamp"]
+                val toLong = timestampString?.toLong()
+                    ?.unaryMinus() ?: 0L
+                toLong
+            }
+            .limitTokens(maxToken, tokenizerService.tokenizer) {
+                formatMemories(it)
+            }
+            .reversed()
 
         return formatMemories(memory)
     }

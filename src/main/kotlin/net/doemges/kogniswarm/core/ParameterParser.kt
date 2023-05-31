@@ -2,6 +2,7 @@ package net.doemges.kogniswarm.core
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import okio.utf8Size
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
@@ -26,7 +27,7 @@ class ParameterParser(private val objectMapper: ObjectMapper) {
             .trim()
             .removeSurrounding("[", "]")
         logger.debug("Parsing $input")
-        val toList = Regex("""\s*([a-zA-Z:\s]*"[^"]*"|[^,\s]*)\s*""")
+        val toList = Regex("""\s*([a-zA-Z:\s]*"[^"]*"|[a-zA-Z:\s]*[^,\s]*)\s*""")
             .findAll(input)
             .toList()
         logger.debug("Parsing $toList")
@@ -51,10 +52,13 @@ class ParameterParser(private val objectMapper: ObjectMapper) {
         val mapIndexed = map2
             .mapIndexed { index, parts ->
                 if (parts.size == 1) {
-                    keys[index] to parts.first()
+                    keys[index] to extractValue(parts.first())
                 } else {
-                    parts.first() to parts.last().trim()
-                        .removeSurrounding("\"")
+                    parts.first() to extractValue(
+                        parts.last()
+                            .trim()
+                            .removeSurrounding("\"")
+                    )
                 }
             }
         logger.debug("Parsing $mapIndexed")
@@ -62,6 +66,12 @@ class ParameterParser(private val objectMapper: ObjectMapper) {
             .toMap()
         logger.debug("Parsing $toMap")
         return toMap
+    }
+
+    private fun extractValue(text: String): String = when {
+        text.contains("true") && text.length <= 5 -> "true"
+        text.contains("false") && text.length <= 6 -> "false"
+        else -> text
     }
 
 }

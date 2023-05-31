@@ -41,7 +41,7 @@ class ContextProcessor(
                         role(ChatRole.User)
                     }
                     message {
-                        content("Write a detailed summary.")
+                        content("Write a summary.")
                         role(ChatRole.System)
                     }
                 }

@@ -53,7 +53,7 @@ class MemoryContextTest {
                 every { tokenize(any()) } returns listOf("action")
             }
         }
-        memoryContext = MemoryContext(testClient, tokenizerService)
+        memoryContext = MemoryContext(testClient, tokenizerService, mockk())
     }
 
     @Test
@@ -74,7 +74,7 @@ class MemoryContextTest {
     @Test
     fun testPutThrowsError() {
         val testClient = createTestableWeaviateClient(hasErrors = true, memoryResults = ArrayList())
-        memoryContext = MemoryContext(testClient, mockk())
+        memoryContext = MemoryContext(testClient, mockk(), mockk())
         val action = createAction()
 
         assertThrows(RuntimeException::class.java) {

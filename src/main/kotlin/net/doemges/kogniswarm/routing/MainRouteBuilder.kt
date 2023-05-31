@@ -5,10 +5,12 @@ import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.log.LogComponent
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class MainRouteBuilder : RouteBuilder() {
+class MainRouteBuilder(@Value("\${camel.message.history:false}") private val messageHistory: Boolean = false) :
+    RouteBuilder() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     override fun configure() {
@@ -29,8 +31,8 @@ class MainRouteBuilder : RouteBuilder() {
     }
 
     private fun configureMessageHistory() {
-        camelContext.isMessageHistory = true
-        logger.info("Message history enabled.")
+        camelContext.isMessageHistory = messageHistory
+        logger.info("Message history ${if (messageHistory) "enabled" else "disabled"}.")
     }
 
     private fun configureLogging() {

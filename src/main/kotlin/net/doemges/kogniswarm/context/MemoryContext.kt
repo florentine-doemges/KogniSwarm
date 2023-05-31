@@ -1,24 +1,27 @@
 package net.doemges.kogniswarm.context
 
+import io.weaviate.client.v1.data.model.WeaviateObject
 import io.weaviate.client.v1.graphql.query.Get
 import io.weaviate.client.v1.graphql.query.argument.NearTextArgument
 import io.weaviate.client.v1.graphql.query.fields.Field
+import io.weaviate.client.v1.schema.model.WeaviateClass
 import net.doemges.kogniswarm.action.Action
 import net.doemges.kogniswarm.core.Mission
-import net.doemges.kogniswarm.token.Tokenizer
 import net.doemges.kogniswarm.token.TokenizerService
 import net.doemges.kogniswarm.token.limitTokens
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
 import java.util.UUID
 
 @Component
+@DependsOn("memoryClass")
 class MemoryContext(
     @Lazy private val weaviateClient: TestableWeaviateClient,
-    private val tokenizerService: TokenizerService
+    private val tokenizerService: TokenizerService,
+    memoryClass: WeaviateClass
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -47,6 +50,9 @@ class MemoryContext(
         val data: Map<String, Any?> = graphQLResponse?.data as Map<String, Any?>
         val get: Map<String, Any?> = data["Get"] as Map<String, Any?>
         val memoryMap = get["Memory"] as ArrayList<Map<String, String>>
+        if (memoryMap.isEmpty()) {
+            return "no context yet"
+        }
         val memory: List<Map<String, String>> = memoryMap
             .sortedBy {
                 val timestampString = it["timestamp"]

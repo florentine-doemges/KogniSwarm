@@ -13,6 +13,7 @@ import io.weaviate.client.v1.schema.model.WeaviateClass
 import net.doemges.kogniswarm.docker.DockerService
 import net.doemges.kogniswarm.weaviate.BaseWeaviateClient
 import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,6 +26,9 @@ import org.testcontainers.containers.wait.strategy.Wait
 @DependsOn("dockerService")
 @Lazy
 class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService) {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Bean(initMethod = "start", destroyMethod = "stop")
     fun weaviateContainer(
         @Value("\${openai.api.key}") openAIApiKey: String
@@ -106,7 +110,7 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
 
     @Bean
     fun replicationConfig(
-        @Value("\${weaviate.replication.factor:3}") factor: Int = 3
+        @Value("\${weaviate.replication.factor:1}") factor: Int = 1
     ): ReplicationConfig =
         ReplicationConfig
             .builder()
@@ -148,8 +152,8 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
         shardingConfig: ShardingConfig,
         replicationConfig: ReplicationConfig,
         vectorIndexConfig: VectorIndexConfig
-    ): WeaviateClass =
-        replicationConfig(
+    ): WeaviateClass {
+        val out = replicationConfig(
             className = "Memory",
             invertedIndexConfig = invertedIndexConfig,
             shardingConfig = shardingConfig,
@@ -206,12 +210,41 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
                 )
             )
             .build()
-            .also {
-                weaviateClient.schema()
-                    .classCreator()
-                    .withClass(it)
+            .also { weaviateClass ->
+                val schemaResult = weaviateClient.schema()
+                    .classGetter()
+                    .withClassName("Memory")
                     .run()
+                if (schemaResult.hasErrors()) {
+                    for (message in schemaResult.error.messages) {
+                        logger.error(message.message)
+                    }
+                    return@also
+                }
+                schemaResult.result?.also {
+                    val classDeleteResult = weaviateClient.schema()
+                        .classDeleter()
+                        .withClassName("Memory")
+                        .run()
+                    if (classDeleteResult.hasErrors()) {
+                        for (message in classDeleteResult.error.messages) {
+                            logger.error(message.message)
+                        }
+                    }
+                }
+                val result = weaviateClient.schema()
+                    .classCreator()
+                    .withClass(weaviateClass)
+                    .run()
+                if (result.hasErrors()) {
+                    for (message in result.error.messages) {
+                        logger.error(message.message)
+                    }
+                }
+
             }
+        return out
+    }
 
     private fun replicationConfig(
         className: String,

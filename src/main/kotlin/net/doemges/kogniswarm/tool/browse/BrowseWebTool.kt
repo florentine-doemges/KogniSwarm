@@ -42,8 +42,7 @@ class BrowseWebTool(
             tool = this,
             args = mapOf(
                 "url" to url,
-                "contentType" to contentType.toString(),
-                "selenium" to selenium.toString()
+                "contentType" to contentType.toString()
             ),
             result = objectMapper.writeValueAsString(extracts),
         )

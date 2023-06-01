@@ -1,6 +1,5 @@
 package net.doemges.kogniswarm.context
 
-import io.weaviate.client.v1.data.model.WeaviateObject
 import io.weaviate.client.v1.graphql.query.Get
 import io.weaviate.client.v1.graphql.query.argument.NearTextArgument
 import io.weaviate.client.v1.graphql.query.fields.Field
@@ -41,7 +40,7 @@ class MemoryContext(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun get(mission: Mission, limit: Int = 10, maxToken: Int = 4000): String {
+    fun get(mission: Mission, limit: Int = 10, maxToken: Int = 4000): ArrayList<Map<String, String>> {
         val withNearText = createNearTextQuery(mission, limit)
 
         val graphQLResponseResult = withNearText?.run()
@@ -49,7 +48,13 @@ class MemoryContext(
 
         val data: Map<String, Any?> = graphQLResponse?.data as Map<String, Any?>
         val get: Map<String, Any?> = data["Get"] as Map<String, Any?>
-        val memoryMap = get["Memory"] as ArrayList<Map<String, String>>
+        return get["Memory"] as ArrayList<Map<String, String>>
+    }
+
+    fun formatContext(
+        memoryMap: ArrayList<Map<String, String>>,
+        maxToken: Int
+    ): String {
         if (memoryMap.isEmpty()) {
             return "no context yet"
         }

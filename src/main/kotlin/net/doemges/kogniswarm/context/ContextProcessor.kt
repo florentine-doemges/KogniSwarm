@@ -22,10 +22,17 @@ class ContextProcessor(
     @OptIn(BetaOpenAI::class)
     override fun process(exchange: Exchange) {
         val mission = exchange.getIn().body as Mission
-        val context: String = memoryContext.get(
+        val contextList = memoryContext.get(
             mission = mission,
             limit = 10
         )
+
+        if (contextList.isEmpty()) {
+            logger.info("No context found for mission $mission")
+            return
+        }
+
+        val context = memoryContext.formatContext(contextList,1_000)
 
         logger.info("Pre Context: $context")
 

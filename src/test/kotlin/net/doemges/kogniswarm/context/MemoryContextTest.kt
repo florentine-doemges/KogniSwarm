@@ -1,7 +1,11 @@
 package net.doemges.kogniswarm.context
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotEmpty
+import assertk.assertions.isNotNull
 import assertk.assertions.isSuccess
 import io.mockk.every
 import io.mockk.mockk
@@ -68,7 +72,11 @@ class MemoryContextTest {
             memoryContext.get(createMission())
         }
 
-        assertThat(result).isEqualTo("- You utilized the tool 'toolName' and got the result 'description'")
+        assertThat(result).all{
+            isNotNull()
+            isInstanceOf(ArrayList::class)
+            isNotEmpty()
+        }
     }
 
     @Test

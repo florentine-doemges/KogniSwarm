@@ -12,7 +12,7 @@ class ActionHistory {
     private val history: MutableMap<Mission, MutableList<Action>> = mutableMapOf()
 
     fun put(mission: Mission, action: Action) {
-        logger.info("Adding to action history: $action")
+        logger.debug("Adding to action history: $action")
         history.getOrPut(mission) { mutableListOf() }
             .add(action)
     }
@@ -21,7 +21,7 @@ class ActionHistory {
         .getOrPut(mission) { mutableListOf() }
         .sortedBy { it.timestamp }
         .also {
-            logger.info("History Size: ${it.size}")
+            logger.debug("History Size: ${it.size}")
         }
 
     fun clear() {

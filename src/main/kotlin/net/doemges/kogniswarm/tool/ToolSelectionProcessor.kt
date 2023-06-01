@@ -20,7 +20,7 @@ class ToolSelectionProcessor(tools: List<Tool>) : Processor {
             }
 
         logger.info("Tools: ${exchange.getIn().headers["tools"].toString()}")
-        logger.info("ToolsDescription: ${exchange.getIn().headers["toolsDescription"].toString()}")
+        logger.info("ToolDescriptions: ${exchange.getIn().headers["toolDescriptions"].toString()}")
     }
 }
 

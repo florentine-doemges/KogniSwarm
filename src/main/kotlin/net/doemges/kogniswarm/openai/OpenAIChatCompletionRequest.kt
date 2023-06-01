@@ -24,27 +24,23 @@ class OpenAIChatCompletionRequest(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @OptIn(BetaOpenAI::class)
-    suspend fun asChatCompletionRequest(openAI: OpenAI): ChatCompletionRequest {
-        return ChatCompletionRequest(
-            model = model
-                ?: openAI.models()
-                    .firstOrNull { modelRequest?.matches(it) ?: false }
-                    ?.id
-                ?: error("model must be set"),
-            messages = messages?.map { it.asChatMessage() } ?: error("messages must be set"),
-            temperature = temperature,
-            topP = topP,
-            n = n,
-            stop = stop,
-            maxTokens = maxTokens,
-            presencePenalty = presencePenalty,
-            frequencyPenalty = frequencyPenalty,
-            logitBias = logitBias,
-            user = user
-        ).also {
-            logger.info("Created ChatCompletionRequest: $it")
-        }
-    }
+    suspend fun asChatCompletionRequest(openAI: OpenAI): ChatCompletionRequest = ChatCompletionRequest(
+        model = model
+            ?: openAI.models()
+                .firstOrNull { modelRequest?.matches(it) ?: false }
+                ?.id
+            ?: error("model must be set"),
+        messages = messages?.map { it.asChatMessage() } ?: error("messages must be set"),
+        temperature = temperature,
+        topP = topP,
+        n = n,
+        stop = stop,
+        maxTokens = maxTokens,
+        presencePenalty = presencePenalty,
+        frequencyPenalty = frequencyPenalty,
+        logitBias = logitBias,
+        user = user
+    )
 
     companion object {
         fun builder(block: Builder.() -> Unit) = Builder().apply(block)

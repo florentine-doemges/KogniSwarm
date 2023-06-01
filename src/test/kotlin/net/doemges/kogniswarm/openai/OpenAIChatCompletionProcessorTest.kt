@@ -5,7 +5,9 @@ import com.aallam.openai.api.chat.ChatChoice
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.client.OpenAI
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
@@ -24,6 +26,10 @@ class OpenAIChatCompletionProcessorTest {
     private val chatCompletionRequest: ChatCompletionRequest = mockk()
     private val openAIChatCompletionRequest: OpenAIChatCompletionRequest = mockk<OpenAIChatCompletionRequest>().apply {
         coEvery { asChatCompletionRequest(any()) } returns chatCompletionRequest
+        every { messages } returns listOf(mockk<OpenAIChatMessage>().apply {
+            every { content } returns "test content"
+            every { role } returns ChatRole.User
+        })
     }
     private val messageMock: Message = mockk<Message>().apply {
         every { body } returns openAIChatCompletionRequest
@@ -48,7 +54,9 @@ class OpenAIChatCompletionProcessorTest {
 
     @BeforeEach
     fun setup() {
-        processor = OpenAIChatCompletionProcessor(openAI)
+        processor = OpenAIChatCompletionProcessor(openAI, mockk<ObjectMapper>().apply {
+            every { writeValueAsString(any()) } returns "test"
+        })
     }
 
     @Test

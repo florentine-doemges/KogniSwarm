@@ -25,10 +25,10 @@ repositories {
 }
 
 extra["springShellVersion"] = "3.0.2"
-    extra["testcontainersVersion"] = "1.17.6"
+extra["testcontainersVersion"] = "1.17.6"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-webflux"){
+    implementation("org.springframework.boot:spring-boot-starter-webflux") {
         exclude(group = "io.netty", module = "netty-resolver-dns-native-macos")
     }
     implementation("org.springframework.data:spring-data-jpa")
@@ -109,5 +109,9 @@ tasks.register<Copy>("copyVueDistToStatic") {
     from("vue-element-admin/dist")
     into("src/main/resources/static")
     dependsOn("npmRunBuildProd")
+}
+
+tasks.named("processResources") {
+    dependsOn("copyVueDistToStatic")
 }
 

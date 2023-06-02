@@ -7,6 +7,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import net.doemges.kogniswarm.extraction.util.ContentExtractor
+import net.doemges.kogniswarm.extraction.model.Extract
+import net.doemges.kogniswarm.extraction.model.ExtractionContentType
 import org.apache.tika.Tika
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono

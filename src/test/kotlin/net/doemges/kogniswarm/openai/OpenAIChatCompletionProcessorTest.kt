@@ -15,6 +15,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import net.doemges.kogniswarm.openai.model.OpenAIChatCompletionRequest
+import net.doemges.kogniswarm.openai.model.OpenAIChatMessage
+import net.doemges.kogniswarm.openai.processor.OpenAIChatCompletionProcessor
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.assertj.core.api.Assertions.assertThat
@@ -61,14 +64,14 @@ class OpenAIChatCompletionProcessorTest {
 
     @Test
     fun `should process exchange successfully`() = runBlocking {
-        processor.processSuspend(exchange)
+        processor.process(exchange)
 
         verify { messageMock.body = chatCompletion }
     }
 
     @Test
     fun `should return the correct message content`(): Unit = runBlocking {
-        processor.processSuspend(exchange)
+        processor.process(exchange)
 
         assertThat(chatChoice.message?.content).isEqualTo("test content")
     }

@@ -11,6 +11,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
+import net.doemges.kogniswarm.extraction.util.PooledWebDriver
+import net.doemges.kogniswarm.extraction.model.Extract
+import net.doemges.kogniswarm.extraction.model.ExtractionContentType
+import net.doemges.kogniswarm.extraction.service.BrowserService
+import net.doemges.kogniswarm.extraction.service.ExtractorService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

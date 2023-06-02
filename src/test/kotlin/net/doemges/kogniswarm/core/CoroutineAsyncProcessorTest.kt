@@ -16,6 +16,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import net.doemges.kogniswarm.core.processor.CoroutineAsyncProcessor
 import org.apache.camel.AsyncCallback
 import org.apache.camel.Exchange
 import org.junit.jupiter.api.Test

@@ -6,7 +6,10 @@ import assertk.assertions.isNotNull
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.action.model.Action
+import net.doemges.kogniswarm.action.processor.UpdateActionHistoryProcessor
+import net.doemges.kogniswarm.action.service.ActionHistoryService
+import net.doemges.kogniswarm.core.model.Mission
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.junit.jupiter.api.BeforeEach
@@ -14,13 +17,13 @@ import org.junit.jupiter.api.Test
 
 class UpdateActionHistoryProcessorTest {
 
-    private lateinit var actionHistory: ActionHistory
+    private lateinit var actionHistoryService: ActionHistoryService
     private lateinit var processor: UpdateActionHistoryProcessor
 
     @BeforeEach
     fun setUp() {
-        actionHistory = mockk(relaxed = true)
-        processor = UpdateActionHistoryProcessor(actionHistory)
+        actionHistoryService = mockk(relaxed = true)
+        processor = UpdateActionHistoryProcessor(actionHistoryService)
     }
 
     @Test
@@ -38,7 +41,7 @@ class UpdateActionHistoryProcessorTest {
         processor.process(exchange)
 
         // Then
-        verify { actionHistory.put(mission, action) }
+        verify { actionHistoryService.put(mission, action) }
     }
 
     @Test
@@ -55,7 +58,7 @@ class UpdateActionHistoryProcessorTest {
         processor.process(exchange)
 
         // Then
-        verify(exactly = 0) { actionHistory.put(any(), any()) }
+        verify(exactly = 0) { actionHistoryService.put(any(), any()) }
     }
 
     @Test
@@ -63,10 +66,10 @@ class UpdateActionHistoryProcessorTest {
         // Given
         val mission = Mission("user", "agent", "prompt")
         val action = Action(mockk(relaxed = true), mapOf())
-        every { actionHistory.get(mission) } returns listOf(action)
+        every { actionHistoryService.get(mission) } returns listOf(action)
 
         // When
-        val result = actionHistory.get(mission)
+        val result = actionHistoryService.get(mission)
 
         // Then
         assertThat(result).isNotNull()

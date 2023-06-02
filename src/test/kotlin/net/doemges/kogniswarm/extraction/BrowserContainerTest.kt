@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import assertk.assertions.isSuccess
+import net.doemges.kogniswarm.extraction.util.BrowserContainer
 import org.junit.jupiter.api.Test
 
 class BrowserContainerTest {

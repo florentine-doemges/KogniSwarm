@@ -1,15 +1,14 @@
 package net.doemges.kogniswarm
 
-import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.core.model.Mission
 import org.apache.camel.CamelContext
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Component
 
-@Component
+//@Component
 @Profile("!test")
 class KogniSwarmRunner(
     private val camelContext: CamelContext,

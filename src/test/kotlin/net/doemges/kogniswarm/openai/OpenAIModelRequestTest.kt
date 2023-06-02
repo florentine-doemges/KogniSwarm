@@ -7,6 +7,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.model.ModelPermission
 import io.mockk.every
 import io.mockk.mockk
+import net.doemges.kogniswarm.openai.model.OpenAIModelRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

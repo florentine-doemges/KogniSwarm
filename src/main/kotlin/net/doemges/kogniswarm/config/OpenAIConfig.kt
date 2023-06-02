@@ -14,7 +14,7 @@ class OpenAIConfig(@Value("\${openai.api.key}") private val token: String) {
     @Bean
     fun openAI(): OpenAI = OpenAI(OpenAIConfig(
         token = token,
-        timeout = Timeout(socket = 60.seconds),
+        timeout = Timeout(socket = 120.seconds),
         logLevel = LogLevel.None
     ))
 

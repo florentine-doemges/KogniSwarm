@@ -10,8 +10,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import net.doemges.kogniswarm.core.Mission
-import net.doemges.kogniswarm.tool.Tool
+import net.doemges.kogniswarm.action.model.Action
+import net.doemges.kogniswarm.action.processor.ActionSummaryProcessor
+import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.tool.processor.ToolProcessor
 import org.apache.camel.CamelContext
 import org.apache.camel.ProducerTemplate
 import org.apache.camel.support.DefaultExchange
@@ -35,7 +37,7 @@ class ActionSummaryProcessorTest {
 
     @Test
     fun `process should modify action description`() {
-        val action = Action(mockk<Tool>(relaxed = true), mapOf(), null, null)
+        val action = Action(mockk<ToolProcessor>(relaxed = true), mapOf(), null, null)
         val mission = Mission("user1", "agent1", "userPrompt1")
         val exchange = DefaultExchange(camelContext).apply {
             `in` = DefaultMessage(camelContext).apply {

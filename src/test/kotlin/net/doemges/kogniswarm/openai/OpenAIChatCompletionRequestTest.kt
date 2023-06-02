@@ -16,6 +16,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import net.doemges.kogniswarm.openai.model.OpenAIChatCompletionRequest
+import net.doemges.kogniswarm.openai.model.OpenAIChatMessage
 import org.junit.jupiter.api.Test
 
 
@@ -91,7 +93,7 @@ class OpenAIChatCompletionRequestTest {
         }
         assertThat {
             createChatCompletionRequest {
-                modelRequest(OpenAIModelRequest.builder {
+                modelRequest(net.doemges.kogniswarm.openai.model.OpenAIModelRequest.builder {
                     modelName("gpt")
                     isGPT4allowed(false)
                 }

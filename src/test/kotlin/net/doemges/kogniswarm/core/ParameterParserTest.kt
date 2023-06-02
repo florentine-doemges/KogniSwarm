@@ -8,7 +8,7 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isSuccess
 import assertk.assertions.key
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.mockk.mockk
+import net.doemges.kogniswarm.core.util.ParameterParser
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 

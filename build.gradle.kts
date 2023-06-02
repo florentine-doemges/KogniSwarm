@@ -1,9 +1,11 @@
+import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 
 plugins {
     id("org.springframework.boot") version "3.0.7"
     id("io.spring.dependency-management") version "1.1.0"
+    id("com.github.node-gradle.node") version "5.0.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.allopen") version "1.7.22"
@@ -23,7 +25,7 @@ repositories {
 }
 
 extra["springShellVersion"] = "3.0.2"
-extra["testcontainersVersion"] = "1.17.6"
+    extra["testcontainersVersion"] = "1.17.6"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux"){
@@ -46,6 +48,7 @@ dependencies {
     implementation("org.testcontainers:selenium:1.18.1")
     implementation("org.apache.tika:tika-core:2.8.0")
     implementation("com.google.apis:google-api-services-customsearch:v1-rev86-1.25.0")
+
 
     runtimeOnly("io.ktor:ktor-client-okhttp:2.3.0")
 
@@ -78,27 +81,33 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.register("exportCode") {
-    val outputDir = File("${project.buildDir}/outputs")
-    val outputFile = File(outputDir, "project_code.txt")
+node {
+    download.set(false)
+    nodeProjectDir.set(file("vue-element-admin"))
+}
 
-    val gitIgnoreFile = File(projectDir, ".gitignore")
-    val ignorePatterns = if (gitIgnoreFile.exists()) gitIgnoreFile.readLines() else listOf()
-
-    doLast {
-        outputDir.mkdirs()
-        outputFile.writeText("") // clear previous content
-
-        project.fileTree(projectDir)
-            .matching {
-                exclude(ignorePatterns)
-            }
-            .visit {
-                if (!isDirectory && name.endsWith(".kt")) {
-                    outputFile.appendText(file.readText() + "\n")
-                }
-            }
-
-        println("Code exported to ${outputFile.absolutePath}")
+tasks {
+    register<NpmTask>("npmRunBuildProd") {
+        group = "build"
+        description = "Run 'npm run build:prod'"
+        args.set(listOf("run", "build:prod"))
+        node.nodeProjectDir.set(file("vue-element-admin"))
     }
 }
+
+tasks {
+    register<NpmTask>("npmVersion") {
+        group = "npm"
+        description = "Print npm version"
+        args.set(listOf("-v"))
+    }
+}
+
+tasks.register<Copy>("copyVueDistToStatic") {
+    group = "build"
+    description = "Copies Vue.js build output to the static resources directory"
+    from("vue-element-admin/dist")
+    into("src/main/resources/static")
+    dependsOn("npmRunBuildProd")
+}
+

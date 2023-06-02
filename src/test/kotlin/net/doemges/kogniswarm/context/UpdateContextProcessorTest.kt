@@ -6,8 +6,10 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import net.doemges.kogniswarm.action.Action
-import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.action.model.Action
+import net.doemges.kogniswarm.context.processor.UpdateContextProcessor
+import net.doemges.kogniswarm.context.service.MemoryContextService
+import net.doemges.kogniswarm.core.model.Mission
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +18,7 @@ import org.junit.jupiter.api.Test
 
 class UpdateContextProcessorTest {
 
-    private val mockMemoryContext: MemoryContext = mockk()
+    private val mockMemoryContextService: MemoryContextService = mockk()
     private val mockExchange: Exchange = mockk()
     private val mockInMessage: Message = mockk()
     private val mission: Mission = Mission("user", "agentName", "userPrompt")
@@ -26,7 +28,7 @@ class UpdateContextProcessorTest {
     fun setUp() {
         every { mockExchange.getIn() } returns mockInMessage
         every { mockInMessage.body } returns mission
-        updateContextProcessor = UpdateContextProcessor(mockMemoryContext)
+        updateContextProcessor = UpdateContextProcessor(mockMemoryContextService)
     }
 
     @Test
@@ -35,14 +37,14 @@ class UpdateContextProcessorTest {
         val actionSlot = slot<Action>()
         val expectedAction = Action(mockk(), mapOf("key" to "value"))
         every { mockInMessage.headers } returns mapOf("action" to expectedAction)
-        every { mockMemoryContext.put(any(), any(), any()) } just Runs
+        every { mockMemoryContextService.put(any(), any(), any()) } just Runs
 
         println(mockInMessage.headers)
         // Act
         updateContextProcessor.process(mockExchange)
 
         // Assert
-        verify(exactly = 1) { mockMemoryContext.put(mission, any(), any()) }
+        verify(exactly = 1) { mockMemoryContextService.put(mission, any(), any()) }
     }
 
 
@@ -55,7 +57,7 @@ class UpdateContextProcessorTest {
         updateContextProcessor.process(mockExchange)
 
         // Assert
-        verify(exactly = 0) { mockMemoryContext.put(mission, any()) }
+        verify(exactly = 0) { mockMemoryContextService.put(mission, any()) }
     }
 
 }

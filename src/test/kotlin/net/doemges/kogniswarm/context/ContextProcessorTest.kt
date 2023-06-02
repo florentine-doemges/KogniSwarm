@@ -11,7 +11,9 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import net.doemges.kogniswarm.core.Mission
+import net.doemges.kogniswarm.context.processor.ContextProcessor
+import net.doemges.kogniswarm.context.service.MemoryContextService
+import net.doemges.kogniswarm.core.model.Mission
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
 import org.apache.camel.Message
@@ -23,7 +25,7 @@ import org.junit.jupiter.api.Test
 @OptIn(BetaOpenAI::class)
 class ContextProcessorTest {
 
-    private lateinit var memoryContext: MemoryContext
+    private lateinit var memoryContextService: MemoryContextService
     private lateinit var camelContext: CamelContext
     private lateinit var processor: Processor
     private lateinit var exchange: Exchange
@@ -31,7 +33,7 @@ class ContextProcessorTest {
 
     @BeforeEach
     fun setUp() {
-        memoryContext = mockk<MemoryContext>().apply {
+        memoryContextService = mockk<MemoryContextService>().apply {
             every { get(any(), any(), any()) } returns mockk<ArrayList<Map<String, String>>>().apply {
                 every { isEmpty() } returns false
             }
@@ -41,7 +43,7 @@ class ContextProcessorTest {
         camelContext = mockk()
         exchange = mockk()
         message = mockk()
-        processor = ContextProcessor(memoryContext, camelContext)
+        processor = ContextProcessor(memoryContextService, camelContext)
 
         every { exchange.getIn() } returns message
     }

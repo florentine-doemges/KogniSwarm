@@ -10,9 +10,9 @@ import io.weaviate.client.v1.misc.model.VectorIndexConfig
 import io.weaviate.client.v1.schema.model.DataType
 import io.weaviate.client.v1.schema.model.Property
 import io.weaviate.client.v1.schema.model.WeaviateClass
-import net.doemges.kogniswarm.docker.DockerService
-import net.doemges.kogniswarm.weaviate.BaseWeaviateClient
-import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
+import net.doemges.kogniswarm.core.service.DockerService
+import net.doemges.kogniswarm.weaviate.util.BaseWeaviateClient
+import net.doemges.kogniswarm.weaviate.util.TestableWeaviateClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

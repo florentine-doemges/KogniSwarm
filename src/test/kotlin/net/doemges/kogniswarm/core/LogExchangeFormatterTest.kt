@@ -2,6 +2,7 @@ package net.doemges.kogniswarm.core
 
 import io.mockk.every
 import io.mockk.mockk
+import net.doemges.kogniswarm.core.util.LogExchangeFormatter
 import org.apache.camel.Exchange
 import org.apache.camel.ExchangePattern
 import org.apache.camel.MessageHistory

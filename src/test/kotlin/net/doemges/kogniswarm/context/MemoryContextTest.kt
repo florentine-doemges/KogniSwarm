@@ -2,7 +2,6 @@ package net.doemges.kogniswarm.context
 
 import assertk.all
 import assertk.assertThat
-import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
@@ -19,19 +18,20 @@ import io.weaviate.client.v1.graphql.GraphQL
 import io.weaviate.client.v1.graphql.model.GraphQLResponse
 import io.weaviate.client.v1.graphql.query.Get
 import io.weaviate.client.v1.misc.Misc
-import net.doemges.kogniswarm.action.Action
-import net.doemges.kogniswarm.core.Mission
-import net.doemges.kogniswarm.token.Tokenizer
-import net.doemges.kogniswarm.token.TokenizerService
-import net.doemges.kogniswarm.tool.Tool
-import net.doemges.kogniswarm.weaviate.TestableWeaviateClient
+import net.doemges.kogniswarm.action.model.Action
+import net.doemges.kogniswarm.context.service.MemoryContextService
+import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.token.util.Tokenizer
+import net.doemges.kogniswarm.token.service.TokenizerService
+import net.doemges.kogniswarm.tool.processor.ToolProcessor
+import net.doemges.kogniswarm.weaviate.util.TestableWeaviateClient
 import org.apache.camel.Exchange
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class MemoryContextTest {
-    private lateinit var memoryContext: MemoryContext
+    private lateinit var memoryContextService: MemoryContextService
 
     @BeforeEach
     fun setup() {
@@ -57,7 +57,7 @@ class MemoryContextTest {
                 every { tokenize(any()) } returns listOf("action")
             }
         }
-        memoryContext = MemoryContext(testClient, tokenizerService, mockk())
+        memoryContextService = MemoryContextService(testClient, tokenizerService, mockk())
     }
 
     @Test
@@ -65,11 +65,11 @@ class MemoryContextTest {
         val action = createAction()
 
         runAssertions {
-            memoryContext.put(createMission(), action)
+            memoryContextService.put(createMission(), action)
         }
 
         val result = runAssertions {
-            memoryContext.get(createMission())
+            memoryContextService.get(createMission())
         }
 
         assertThat(result).all{
@@ -82,11 +82,11 @@ class MemoryContextTest {
     @Test
     fun testPutThrowsError() {
         val testClient = createTestableWeaviateClient(hasErrors = true, memoryResults = ArrayList())
-        memoryContext = MemoryContext(testClient, mockk(), mockk())
+        memoryContextService = MemoryContextService(testClient, mockk(), mockk())
         val action = createAction()
 
         assertThrows(RuntimeException::class.java) {
-            memoryContext.put(createMission(), action)
+            memoryContextService.put(createMission(), action)
         }
     }
 
@@ -95,7 +95,7 @@ class MemoryContextTest {
 
     private fun createAction(): Action {
         return Action(
-            object : Tool {
+            object : ToolProcessor {
                 override val name: String = "test"
                 override val description: String = "test"
                 override val args: Map<String, String> = mapOf(

@@ -71,3 +71,4 @@ replay_pid*
 /gradle/
 /gradlew
 /gradlew.bat
+/vue-element-admin/node_modules/

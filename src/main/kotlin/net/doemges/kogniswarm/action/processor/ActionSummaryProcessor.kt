@@ -5,7 +5,7 @@ import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatRole
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.doemges.kogniswarm.action.model.Action
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.core.functions.formatTimestamp
 import net.doemges.kogniswarm.openai.model.OpenAIChatCompletionRequest
 import org.apache.camel.CamelContext
@@ -57,7 +57,7 @@ class ActionSummaryProcessor(
                             )
                             variable(
                                 "goal",
-                                (message.body as Mission).userPrompt
+                                (message.body as MissionKey).userPrompt
                             )
                         }
                     }

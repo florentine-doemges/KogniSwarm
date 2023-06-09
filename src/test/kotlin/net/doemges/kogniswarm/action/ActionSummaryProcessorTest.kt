@@ -12,7 +12,7 @@ import io.mockk.slot
 import io.mockk.verify
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.action.processor.ActionSummaryProcessor
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.tool.processor.ToolProcessor
 import org.apache.camel.CamelContext
 import org.apache.camel.ProducerTemplate
@@ -38,11 +38,11 @@ class ActionSummaryProcessorTest {
     @Test
     fun `process should modify action description`() {
         val action = Action(mockk<ToolProcessor>(relaxed = true), mapOf(), null, null)
-        val mission = Mission("user1", "agent1", "userPrompt1")
+        val missionKey = MissionKey("user1", "agent1", "userPrompt1")
         val exchange = DefaultExchange(camelContext).apply {
             `in` = DefaultMessage(camelContext).apply {
                 headers["action"] = action
-                body = mission
+                body = missionKey
             }
         }
         val chatCompletion: ChatCompletion = mockk(relaxed = true)

@@ -9,7 +9,7 @@ import io.mockk.verify
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.action.processor.UpdateActionHistoryProcessor
 import net.doemges.kogniswarm.action.service.ActionHistoryService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.junit.jupiter.api.BeforeEach
@@ -30,28 +30,28 @@ class UpdateActionHistoryProcessorTest {
     fun `should add action to history when action is present`() {
         // Given
         val action = Action(mockk(relaxed = true), mapOf())
-        val mission = Mission("user", "agent", "prompt")
+        val missionKey = MissionKey("user", "agent", "prompt")
         val exchange = mockk<Exchange>()
         val message = mockk<Message>()
         every { exchange.getIn() } returns message
-        every { message.body } returns mission
+        every { message.body } returns missionKey
         every { message.headers } returns mapOf("action" to action)
 
         // When
         processor.process(exchange)
 
         // Then
-        verify { actionHistoryService.put(mission, action) }
+        verify { actionHistoryService.put(missionKey, action) }
     }
 
     @Test
     fun `should not add action to history when action is not present`() {
         // Given
-        val mission = Mission("user", "agent", "prompt")
+        val missionKey = MissionKey("user", "agent", "prompt")
         val exchange = mockk<Exchange>()
         val message = mockk<Message>()
         every { exchange.getIn() } returns message
-        every { message.body } returns mission
+        every { message.body } returns missionKey
         every { message.headers } returns emptyMap()
 
         // When
@@ -64,12 +64,12 @@ class UpdateActionHistoryProcessorTest {
     @Test
     fun `should correctly retrieve action history`() {
         // Given
-        val mission = Mission("user", "agent", "prompt")
+        val missionKey = MissionKey("user", "agent", "prompt")
         val action = Action(mockk(relaxed = true), mapOf())
-        every { actionHistoryService.get(mission) } returns listOf(action)
+        every { actionHistoryService.get(missionKey) } returns listOf(action)
 
         // When
-        val result = actionHistoryService.get(mission)
+        val result = actionHistoryService.get(missionKey)
 
         // Then
         assertThat(result).isNotNull()

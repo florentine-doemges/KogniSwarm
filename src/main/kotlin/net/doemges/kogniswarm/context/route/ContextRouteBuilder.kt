@@ -2,9 +2,11 @@ package net.doemges.kogniswarm.context.route
 
 import net.doemges.kogniswarm.context.processor.ContextProcessor
 import org.apache.camel.builder.RouteBuilder
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("!test")
 class ContextRouteBuilder(private val contextProcessor: ContextProcessor) : RouteBuilder() {
     override fun configure() {
         from("direct:context")

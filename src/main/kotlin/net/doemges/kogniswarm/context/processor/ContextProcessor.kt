@@ -4,15 +4,17 @@ import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatRole
 import net.doemges.kogniswarm.context.service.MemoryContextService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.openai.model.OpenAIChatCompletionRequest
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("!test")
 class ContextProcessor(
     private val memoryContextService: MemoryContextService,
     private val camelContext: CamelContext
@@ -22,14 +24,14 @@ class ContextProcessor(
 
     @OptIn(BetaOpenAI::class)
     override fun process(exchange: Exchange) {
-        val mission = exchange.getIn().body as Mission
+        val missionKey = exchange.getIn().body as MissionKey
         val contextList = memoryContextService.get(
-            mission = mission,
+            missionKey = missionKey,
             limit = 10
         )
 
         if (contextList.isEmpty()) {
-            logger.debug("No context found for mission $mission")
+            logger.debug("No context found for mission $missionKey")
             return
         }
 

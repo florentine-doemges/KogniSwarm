@@ -4,7 +4,7 @@ import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatRole
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.openai.model.OpenAIChatCompletionRequest
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
@@ -20,7 +20,7 @@ abstract class AbstractThinkingProcessor(
     @OptIn(BetaOpenAI::class)
     override fun process(exchange: Exchange) {
         val message: Message = exchange.getIn()
-        val mission = message.body as Mission
+        val missionKey = message.body as MissionKey
         val openAIChatCompletionRequest = OpenAIChatCompletionRequest
             .builder {
                 optimize(true)
@@ -51,7 +51,7 @@ abstract class AbstractThinkingProcessor(
                         )
                         variable("context", message.headers["context"] as? String ?: "no context yet")
                         variable("tools", message.headers["toolDescriptions"] as? String ?: "no tools")
-                        variable("goal", mission.userPrompt)
+                        variable("goal", missionKey.userPrompt)
                         variable("action", message.headers["action"]?.let { objectMapper.writeValueAsString(it) } ?: "")
                     }
                 }

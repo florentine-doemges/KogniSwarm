@@ -20,7 +20,7 @@ import io.weaviate.client.v1.graphql.query.Get
 import io.weaviate.client.v1.misc.Misc
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.context.service.MemoryContextService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.token.util.Tokenizer
 import net.doemges.kogniswarm.token.service.TokenizerService
 import net.doemges.kogniswarm.tool.processor.ToolProcessor
@@ -91,7 +91,7 @@ class MemoryContextTest {
     }
 
     // Helper methods for creating test objects
-    private fun createMission(): Mission = Mission("user", "agentName", "userPrompt")
+    private fun createMission(): MissionKey = MissionKey("user", "agentName", "userPrompt")
 
     private fun createAction(): Action {
         return Action(

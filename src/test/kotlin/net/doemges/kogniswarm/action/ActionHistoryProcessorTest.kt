@@ -7,7 +7,7 @@ import io.mockk.verify
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.action.processor.ActionHistoryProcessor
 import net.doemges.kogniswarm.action.service.ActionHistoryService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.token.util.Tokenizer
 import net.doemges.kogniswarm.token.service.TokenizerService
 import org.apache.camel.Exchange
@@ -44,18 +44,18 @@ class ActionHistoryProcessorTest {
 
     @Test
     fun `process should add history to exchange headers`() {
-        val mission = Mission("user1", "agent1", "userPrompt1")
+        val missionKey = MissionKey("user1", "agent1", "userPrompt1")
         val history = listOf(Action(mockk(), mapOf("arg1" to "val1")))
 
-        every { inMessage.body } returns mission
-        every { actionHistoryService.get(mission) } returns history
+        every { inMessage.body } returns missionKey
+        every { actionHistoryService.get(missionKey) } returns history
 
         val headersMap = mutableMapOf<String, Any>()
         every { inMessage.headers } returns headersMap
 
         processor.process(exchange)
 
-        verify { actionHistoryService.get(mission) }
+        verify { actionHistoryService.get(missionKey) }
         verify { inMessage.headers }
 
         assertThat(headersMap["actionHistory"]).isEqualTo(history)

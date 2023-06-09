@@ -9,7 +9,7 @@ import assertk.assertions.isSuccess
 import io.mockk.mockk
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.action.service.ActionHistoryService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -24,14 +24,14 @@ class ActionHistoryTest {
 
     @Test
     fun `put adds action to history`() {
-        val mission = Mission("user1", "agent1", "prompt1")
+        val missionKey = MissionKey("user1", "agent1", "prompt1")
         val action = Action(mockk(), emptyMap())
 
         actionHistoryService.clear()
 
-        actionHistoryService.put(mission, action)
+        actionHistoryService.put(missionKey, action)
 
-        assertThat { actionHistoryService.get(mission) }
+        assertThat { actionHistoryService.get(missionKey) }
             .isSuccess()
             .all {
                 isNotNull()
@@ -41,27 +41,27 @@ class ActionHistoryTest {
 
     @Test
     fun `get returns null for non-existent mission`() {
-        val mission = Mission("user1", "agent1", "prompt1")
+        val missionKey = MissionKey("user1", "agent1", "prompt1")
 
         actionHistoryService.clear()
 
-        assertThat { actionHistoryService.get(mission) }
+        assertThat { actionHistoryService.get(missionKey) }
             .isSuccess()
             .isNullOrEmpty()
     }
 
     @Test
     fun `get returns all actions for a mission`() {
-        val mission = Mission("user1", "agent1", "prompt1")
+        val missionKey = MissionKey("user1", "agent1", "prompt1")
         val action1 = Action(mockk(), emptyMap())
         val action2 = Action(mockk(), emptyMap())
 
         actionHistoryService.clear()
 
-        actionHistoryService.put(mission, action1)
-        actionHistoryService.put(mission, action2)
+        actionHistoryService.put(missionKey, action1)
+        actionHistoryService.put(missionKey, action2)
 
-        assertThat { actionHistoryService.get(mission) }
+        assertThat { actionHistoryService.get(missionKey) }
             .isSuccess()
             .all {
                 isNotNull()

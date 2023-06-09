@@ -9,7 +9,7 @@ import io.mockk.verify
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.context.processor.UpdateContextProcessor
 import net.doemges.kogniswarm.context.service.MemoryContextService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import org.apache.camel.Exchange
 import org.apache.camel.Message
 import org.junit.jupiter.api.BeforeEach
@@ -21,13 +21,13 @@ class UpdateContextProcessorTest {
     private val mockMemoryContextService: MemoryContextService = mockk()
     private val mockExchange: Exchange = mockk()
     private val mockInMessage: Message = mockk()
-    private val mission: Mission = Mission("user", "agentName", "userPrompt")
+    private val missionKey: MissionKey = MissionKey("user", "agentName", "userPrompt")
     private lateinit var updateContextProcessor: UpdateContextProcessor
 
     @BeforeEach
     fun setUp() {
         every { mockExchange.getIn() } returns mockInMessage
-        every { mockInMessage.body } returns mission
+        every { mockInMessage.body } returns missionKey
         updateContextProcessor = UpdateContextProcessor(mockMemoryContextService)
     }
 
@@ -44,7 +44,7 @@ class UpdateContextProcessorTest {
         updateContextProcessor.process(mockExchange)
 
         // Assert
-        verify(exactly = 1) { mockMemoryContextService.put(mission, any(), any()) }
+        verify(exactly = 1) { mockMemoryContextService.put(missionKey, any(), any()) }
     }
 
 
@@ -57,7 +57,7 @@ class UpdateContextProcessorTest {
         updateContextProcessor.process(mockExchange)
 
         // Assert
-        verify(exactly = 0) { mockMemoryContextService.put(mission, any()) }
+        verify(exactly = 0) { mockMemoryContextService.put(missionKey, any()) }
     }
 
 }

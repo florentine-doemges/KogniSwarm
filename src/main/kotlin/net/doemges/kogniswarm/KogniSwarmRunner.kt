@@ -1,6 +1,6 @@
 package net.doemges.kogniswarm
 
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import org.apache.camel.CamelContext
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -30,7 +30,7 @@ class KogniSwarmRunner(
         camelContext.createProducerTemplate()
             .requestBody(
                 "direct:prompt",
-                Mission(
+                MissionKey(
                     "user",
                     "agent",
                     "Write me a book about digital marxism"

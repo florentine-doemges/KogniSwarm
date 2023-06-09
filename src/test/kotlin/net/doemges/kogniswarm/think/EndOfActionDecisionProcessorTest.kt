@@ -11,7 +11,7 @@ import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatMessage
 import io.mockk.every
 import io.mockk.mockk
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.think.processor.EndOfActionDecisionProcessor
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
@@ -38,7 +38,7 @@ class EndOfActionDecisionProcessorTest {
             EndOfActionDecisionProcessor(camelContext, mockk())
 
         val message = mockk<Message>().apply {
-            every { body } returns Mission("Test", "Test", "Test")
+            every { body } returns MissionKey("Test", "Test", "Test")
             every { headers } returns mutableMapOf<String, Any>()
         }
         endOfActionDecisionProcessor.process(mockk<Exchange>().apply {

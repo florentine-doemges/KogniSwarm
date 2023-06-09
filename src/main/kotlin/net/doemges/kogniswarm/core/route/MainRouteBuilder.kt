@@ -1,7 +1,7 @@
 package net.doemges.kogniswarm.core.route
 
 import net.doemges.kogniswarm.core.util.LogExchangeFormatter
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.log.LogComponent
@@ -50,7 +50,7 @@ class MainRouteBuilder(@Value("\${camel.message.history:false}") private val mes
             .process {
                 val message = it.getIn()
                 logger.debug("incoming Prompt (round #${(message.headers["actionHistory"] as? List<*>)?.size ?: 0}): ${message.body}")
-                logger.info("Prompt: ${(message.body as Mission).userPrompt}")
+                logger.info("Prompt: ${(message.body as MissionKey).userPrompt}")
             }
             .to("direct:preparation")
             .to("direct:processing")

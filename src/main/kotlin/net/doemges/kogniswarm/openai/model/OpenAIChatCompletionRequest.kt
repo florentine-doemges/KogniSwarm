@@ -3,6 +3,7 @@ package net.doemges.kogniswarm.openai.model
 import com.aallam.openai.api.BetaOpenAI
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatRole
+import com.aallam.openai.api.model.Model
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import org.slf4j.LoggerFactory
@@ -27,8 +28,7 @@ class OpenAIChatCompletionRequest(
 
     @OptIn(BetaOpenAI::class)
     suspend fun asChatCompletionRequest(openAI: OpenAI): ChatCompletionRequest =
-        ChatCompletionRequest(model = model ?: openAI.models()
-            .firstOrNull { modelRequest?.matches(it) ?: false }?.id ?: error("model must be set"),
+        ChatCompletionRequest(model = model ?: fromModelRequest(openAI)?.id ?: error("model must be set"),
             messages = messages?.map { it.asChatMessage() } ?: error("messages must be set"),
             temperature = temperature,
             topP = topP,
@@ -39,6 +39,13 @@ class OpenAIChatCompletionRequest(
             frequencyPenalty = frequencyPenalty,
             logitBias = logitBias,
             user = user)
+
+    private suspend fun fromModelRequest(openAI: OpenAI): Model? {
+        val models = openAI.models()
+        val out = models
+            .firstOrNull { modelRequest?.matches(it) ?: false }
+        return out
+    }
 
     @OptIn(BetaOpenAI::class)
     fun modifyUserMessageContent(content: String): OpenAIChatCompletionRequest {

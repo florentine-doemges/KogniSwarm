@@ -11,7 +11,7 @@ import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatMessage
 import io.mockk.every
 import io.mockk.mockk
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.think.processor.ChainOfThoughtProcessor
 import net.doemges.kogniswarm.tool.processor.ToolProcessor
 import org.apache.camel.CamelContext
@@ -40,7 +40,7 @@ class ChainOfThoughtProcessorTest {
         }))
 
         val message = mockk<Message>().apply {
-            every { body } returns Mission("Test", "Test", "Test")
+            every { body } returns MissionKey("Test", "Test", "Test")
             every { headers } returns mutableMapOf<String, Any>()
         }
         chainOfThoughtProcessor.process(mockk<Exchange>().apply {

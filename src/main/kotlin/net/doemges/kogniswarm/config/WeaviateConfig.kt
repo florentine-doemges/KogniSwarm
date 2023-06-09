@@ -19,12 +19,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Lazy
+import org.springframework.context.annotation.Profile
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 
 @Configuration
 @DependsOn("dockerService")
 @Lazy
+@Profile("!test")
 class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -54,6 +56,7 @@ class WeaviateConfig(@Suppress("UNUSED_PARAMETER") dockerService: DockerService)
 
 
     @Bean
+    @Profile("test")
     fun testableWeaviateClient(
         weaviateClient: WeaviateClient
     ): TestableWeaviateClient = BaseWeaviateClient(weaviateClient)

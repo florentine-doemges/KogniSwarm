@@ -6,17 +6,19 @@ import io.weaviate.client.v1.graphql.query.fields.Field
 import io.weaviate.client.v1.schema.model.WeaviateClass
 import net.doemges.kogniswarm.action.model.Action
 import net.doemges.kogniswarm.core.functions.limitTokens
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.token.service.TokenizerService
 import net.doemges.kogniswarm.weaviate.util.TestableWeaviateClient
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.DependsOn
 import org.springframework.context.annotation.Lazy
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 @DependsOn("memoryClass")
+@Profile("!test")
 class MemoryContextService(
     @Lazy private val weaviateClient: TestableWeaviateClient,
     private val tokenizerService: TokenizerService,
@@ -25,12 +27,12 @@ class MemoryContextService(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun put(mission: Mission, action: Action, id: UUID = UUID.randomUUID()) {
+    fun put(missionKey: MissionKey, action: Action, id: UUID = UUID.randomUUID()) {
         val run = weaviateClient.data()
             .creator()
             .withClassName("Memory")
             .withID(id.toString())
-            .withProperties(createPropertiesMap(mission, action))
+            .withProperties(createPropertiesMap(missionKey, action))
             .run()
         if (run.hasErrors()) {
             val errorMessage = run.error.messages.joinToString("\n") { it.message }
@@ -40,8 +42,8 @@ class MemoryContextService(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun get(mission: Mission, limit: Int = 10, maxToken: Int = 4000): ArrayList<Map<String, String>> {
-        val withNearText = createNearTextQuery(mission, limit)
+    fun get(missionKey: MissionKey, limit: Int = 10, maxToken: Int = 4000): ArrayList<Map<String, String>> {
+        val withNearText = createNearTextQuery(missionKey, limit)
 
         val graphQLResponseResult = withNearText?.run()
         val graphQLResponse = graphQLResponseResult?.result
@@ -74,11 +76,11 @@ class MemoryContextService(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun createPropertiesMap(mission: Mission, action: Action): Map<String, Any> {
+    private fun createPropertiesMap(missionKey: MissionKey, action: Action): Map<String, Any> {
         val map = mapOf(
-            "userName" to mission.user,
-            "agentName" to mission.agentName,
-            "userPrompt" to mission.userPrompt,
+            "userName" to missionKey.user,
+            "agentName" to missionKey.agentName,
+            "userPrompt" to missionKey.userPrompt,
             "toolName" to action.toolProcessor.name,
             "toolDescription" to action.toolProcessor.description,
             "args" to action.args.keys.joinToString(", ") {
@@ -94,14 +96,14 @@ class MemoryContextService(
         return map
     }
 
-    private fun createNearTextQuery(mission: Mission, limit: Int = 10): Get? {
+    private fun createNearTextQuery(missionKey: MissionKey, limit: Int = 10): Get? {
         return weaviateClient
             .graphQL()
             .get()
             .withClassName("Memory")
             .withNearText(
                 NearTextArgument.builder()
-                    .concepts(arrayOf(mission.userPrompt))
+                    .concepts(arrayOf(missionKey.userPrompt))
                     .build()
             )
             .withLimit(limit)

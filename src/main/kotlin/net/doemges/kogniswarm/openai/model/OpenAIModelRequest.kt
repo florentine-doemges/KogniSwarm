@@ -17,7 +17,7 @@ data class OpenAIModelRequest(
     fun matches(model: Model): Boolean {
         if (modelName == null || !model.id.id.contains(modelName, ignoreCase = true))
             return false
-        if (isGPT4allowed == null || isGPT4allowed != model.id.id.contains("gpt-4"))
+        if (isGPT4allowed != null && isGPT4allowed != model.id.id.contains("gpt-4"))
             return false
         val anyPermissionMatches = model.permission.any { permission ->
             matches(permission)

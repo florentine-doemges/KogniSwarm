@@ -13,7 +13,7 @@ import io.mockk.just
 import io.mockk.mockk
 import net.doemges.kogniswarm.context.processor.ContextProcessor
 import net.doemges.kogniswarm.context.service.MemoryContextService
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import org.apache.camel.CamelContext
 import org.apache.camel.Exchange
 import org.apache.camel.Message
@@ -50,7 +50,7 @@ class ContextProcessorTest {
 
     @Test
     fun `process should update exchange's context header with chat completion response content`() {
-        val mission = Mission("user", "agentName", "userPrompt")
+        val missionKey = MissionKey("user", "agentName", "userPrompt")
         val preContext = "pre-context"
         val postContext = "post-context"
         val producerTemplate = mockk<ProducerTemplate>()
@@ -59,7 +59,7 @@ class ContextProcessorTest {
         val chatMessage = ChatMessage(ChatRole.System, postContext)
         val headers = mutableMapOf<String, Any?>()
 
-        every { message.body } returns mission
+        every { message.body } returns missionKey
         every { camelContext.createProducerTemplate() } returns producerTemplate
         every { producerTemplate.requestBody(any<String>(), any<Any>()) } returns chatCompletion
         every { chatCompletion.choices } returns listOf(chatChoice)

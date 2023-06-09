@@ -3,7 +3,7 @@ package net.doemges.kogniswarm.action.processor
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.doemges.kogniswarm.action.service.ActionHistoryService
 import net.doemges.kogniswarm.core.functions.limitTokens
-import net.doemges.kogniswarm.core.model.Mission
+import net.doemges.kogniswarm.mission.model.MissionKey
 import net.doemges.kogniswarm.token.service.TokenizerService
 import org.apache.camel.Exchange
 import org.apache.camel.Processor
@@ -20,8 +20,8 @@ class ActionHistoryProcessor(
 
     private val logger = LoggerFactory.getLogger(javaClass)
     override fun process(exchange: Exchange) {
-        val mission = exchange.getIn().body as Mission
-        val actionList = actionHistoryService.get(mission)
+        val missionKey = exchange.getIn().body as MissionKey
+        val actionList = actionHistoryService.get(missionKey)
         val history = actionList
             ?.reversed()
             ?.limitTokens(1000, tokenizerService.tokenizer) {
